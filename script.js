@@ -71,26 +71,6 @@ function resetTotalScores() {
     }
 }
 
-// Funzione per visualizzare il punteggio giornaliero totale per un nickname
-function viewDailyScore() {
-    const nickname = document.getElementById('viewNickname').value;
-    if (nickname.trim() === "") {
-        alert("Inserisci un nickname.");
-        return;
-    }
-
-    const dailyRef = database.ref('dailyResults/' + nickname);
-    dailyRef.once('value').then(snapshot => {
-        const score = snapshot.val() || 0;
-
-        const dailyResultDiv = document.getElementById('dailyResult');
-        dailyResultDiv.innerHTML = `<h2>Punteggio Giornaliero per ${nickname}</h2>`;
-        dailyResultDiv.innerHTML += `<p>Totale: ${score} punti</p>`;
-    }).catch(error => {
-        console.error("Error retrieving daily score:", error);
-    });
-}
-
 // Funzione per aggiornare i risultati
 function updateResults() {
     // Recupera i risultati giornalieri
