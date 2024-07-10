@@ -1,5 +1,6 @@
-const dailyResults = [];
-const totalResults = {};
+// Inizializza le classifiche con i dati salvati in localStorage
+const dailyResults = JSON.parse(localStorage.getItem('dailyResults')) || [];
+const totalResults = JSON.parse(localStorage.getItem('totalResults')) || {};
 
 function submitForm() {
     const nickname = document.getElementById('nickname').value;
@@ -12,6 +13,7 @@ function submitForm() {
 
     // Aggiorna la classifica giornaliera
     dailyResults.push({ nickname, score });
+    localStorage.setItem('dailyResults', JSON.stringify(dailyResults));
     
     // Aggiorna la classifica totale
     if (totalResults[nickname]) {
@@ -19,12 +21,14 @@ function submitForm() {
     } else {
         totalResults[nickname] = score;
     }
+    localStorage.setItem('totalResults', JSON.stringify(totalResults));
 
     updateResults();
 }
 
 function resetDailyScores() {
     dailyResults.length = 0; // Resetta l'array dei risultati giornalieri
+    localStorage.setItem('dailyResults', JSON.stringify(dailyResults));
     updateResults(); // Aggiorna la visualizzazione
 }
 
@@ -50,3 +54,6 @@ function updateResults() {
         totalResultDiv.innerHTML += `<p>${index + 1}. ${result.nickname} - ${result.score} punti</p>`;
     });
 }
+
+// Aggiorna le classifiche al caricamento della pagina
+document.addEventListener('DOMContentLoaded', updateResults);
