@@ -27,14 +27,16 @@ async function submitForm() {
 
     try {
         // Aggiorna la classifica giornaliera
-        const dailyRef = database.ref('dailyResults').push();
-        await dailyRef.set({ nickname, score });
+        const dailyRef = database.ref('dailyResults/' + nickname);
+        const snapshot = await dailyRef.once('value');
+        const currentScore = snapshot.val() || 0;
+        await dailyRef.set(currentScore + score);
 
         // Aggiorna la classifica totale
         const totalRef = database.ref('totalResults/' + nickname);
-        const snapshot = await totalRef.once('value');
-        const currentScore = snapshot.val() || 0;
-        await totalRef.set(currentScore + score);
+        const totalSnapshot = await totalRef.once('value');
+        const totalCurrentScore = totalSnapshot.val() || 0;
+        await totalRef.set(totalCurrentScore + score);
 
         updateResults();
     } catch (error) {
@@ -77,21 +79,15 @@ function viewDailyScore() {
         return;
     }
 
-    const dailyRef = database.ref('dailyResults');
+    const dailyRef = database.ref('dailyResults/' + nickname);
     dailyRef.once('value').then(snapshot => {
-        let totalScore = 0;
-        snapshot.forEach(childSnapshot => {
-            const data = childSnapshot.val();
-            if (data.nickname === nickname) {
-                totalScore += data.score;
-            }
-        });
+        const score = snapshot.val() || 0;
 
         const dailyResultDiv = document.getElementById('dailyResult');
         dailyResultDiv.innerHTML = `<h2>Punteggio Giornaliero per ${nickname}</h2>`;
-        dailyResultDiv.innerHTML += `<p>Totale: ${totalScore} punti</p>`;
+        dailyResultDiv.innerHTML += `<p>Totale: ${score} punti</p>`;
     }).catch(error => {
-        console.error("Error retrieving daily scores:", error);
+        console.error("Error retrieving daily score:", error);
     });
 }
 
@@ -101,7 +97,7 @@ function updateResults() {
     database.ref('dailyResults').once('value').then(snapshot => {
         const dailyResults = [];
         snapshot.forEach(childSnapshot => {
-            dailyResults.push(childSnapshot.val());
+            dailyResults.push({ nickname: childSnapshot.key, score: childSnapshot.val() });
         });
 
         const dailyResultDiv = document.getElementById('dailyResult');
