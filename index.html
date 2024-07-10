@@ -1,34 +1,41 @@
 <!DOCTYPE html>
-<html lang="it">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Selezione Punteggi</title>
-    <link rel="stylesheet" href="styles.css">
-    <!-- Include Firebase SDK -->
-    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database.js"></script>
+    <title>Classifica</title>
 </head>
 <body>
-    <div class="container">
-        <h1>Seleziona le Caselle</h1>
-        <form id="selectionForm">
-            <label for="nickname">Nickname:</label>
-            <input type="text" id="nickname" name="nickname" required>
-            <div class="checkboxes">
-                <label><input type="checkbox" name="box" value="1"> Casella 1 (1 punto)</label>
-                <label><input type="checkbox" name="box" value="2"> Casella 2 (2 punti)</label>
-                <label><input type="checkbox" name="box" value="3"> Casella 3 (3 punti)</label>
-                <label><input type="checkbox" name="box" value="4"> Casella 4 (4 punti)</label>
-                <!-- Aggiungi altre caselle fino a 20 -->
-            </div>
-            <button type="button" onclick="submitForm()">Invia</button>
-            <button type="button" onclick="resetDailyScores()">Reset Classifica Giornaliera</button>
-            <button type="button" onclick="resetTotalScores()">Reset Classifica Totale</button>
-        </form>
-        <div id="dailyResult"></div>
-        <div id="totalResult"></div>
+    <h1>Benvenuto nella Classifica</h1>
+
+    <form onsubmit="submitForm(); return false;">
+        <label for="nickname">Nickname:</label>
+        <input type="text" id="nickname" name="nickname" required>
+        <br>
+        <label>Seleziona le caselle:</label>
+        <br>
+        <!-- Aggiungi qui le tue 20 caselle di selezione -->
+        <input type="checkbox" name="box" value="1"> Casella 1 (1 punto)<br>
+        <input type="checkbox" name="box" value="2"> Casella 2 (2 punti)<br>
+        <!-- Ripeti per tutte le caselle -->
+        <button type="submit">Invia</button>
+    </form>
+
+    <button onclick="resetDailyScores()">Reset Classifica Giornaliera</button>
+    <button onclick="resetTotalScores()">Reset Classifica Totale</button>
+
+    <div id="dailyResult">
+        <h2>Classifica Giornaliera</h2>
     </div>
+
+    <div id="totalResult">
+        <h2>Classifica Totale</h2>
+    </div>
+
+    <!-- Includi gli script di Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/9.2.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.2.0/firebase-database.js"></script>
+    <!-- Includi il tuo script -->
     <script src="script.js"></script>
 </body>
 </html>
