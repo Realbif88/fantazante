@@ -1,16 +1,18 @@
+// Configurazione di Firebase
 const firebaseConfig = {
-  apiKey: "AIzaSyB5S_sQKbmFUOHZlHbk9SrIhvuCRnuDEAc",
-  authDomain: "fantazante-36bd2.firebaseapp.com",
-  projectId: "fantazante-36bd2",
-  storageBucket: "fantazante-36bd2.appspot.com",
-  messagingSenderId: "192840108739",
-  appId: "1:192840108739:web:08fead29a92b172cb93076"
-};
+    apiKey: "AIzaSyB5S_sQKbmFUOHZlHbk9SrIhvuCRnuDEAc",
+    authDomain: "fantazante-36bd2.firebaseapp.com",
+    databaseURL: "https://fantazante-36bd2-default-rtdb.europe-west1.firebasedatabase.app",
+    projectId: "fantazante-36bd2",
+    storageBucket: "fantazante-36bd2.appspot.com",
+    messagingSenderId: "192840108739",
+    appId: "1:192840108739:web:08fead29a92b172cb93076"
+    measurementId: "G-H34G804QBT"
 };
 
-// Inizializza Firebase e Firestore
+// Inizializza Firebase e Realtime Database
 firebase.initializeApp(firebaseConfig);
-const db = firebase.firestore();
+const database = firebase.database();
 
 // Funzione per inviare i dati al database
 async function submitForm() {
@@ -26,14 +28,14 @@ async function submitForm() {
 
     try {
         // Aggiorna la classifica giornaliera
-        const dailyRef = db.collection('dailyResults');
-        await dailyRef.add({ nickname, score });
+        const dailyRef = database.ref('dailyResults');
+        await dailyRef.push({ nickname, score });
 
         // Aggiorna la classifica totale
-        const totalRef = db.collection('totalResults').doc(nickname);
-        const doc = await totalRef.get();
-        const currentScore = doc.exists ? doc.data().score : 0;
-        await totalRef.set({ score: currentScore + score });
+        const totalRef = database.ref('totalResults/' + nickname);
+        const snapshot = await totalRef.once('value');
+        const currentScore = snapshot.val() || 0;
+        await totalRef.set(currentScore + score);
 
         updateResults();
     } catch (error) {
@@ -43,32 +45,26 @@ async function submitForm() {
 
 // Funzione per resettare i punteggi giornalieri
 function resetDailyScores() {
-    db.collection('dailyResults').get().then(querySnapshot => {
-        querySnapshot.forEach(doc => {
-            doc.ref.delete();
+    database.ref('dailyResults').remove()
+        .then(() => {
+            updateResults();
+            alert("Classifica giornaliera resettata.");
+        }).catch(error => {
+            console.error("Error resetting daily scores:", error);
         });
-    }).then(() => {
-        updateResults();
-        alert("Classifica giornaliera resettata.");
-    }).catch(error => {
-        console.error("Error resetting daily scores:", error);
-    });
 }
 
 // Funzione per resettare i punteggi totali
 function resetTotalScores() {
     const password = prompt("Inserisci la password per resettare la classifica totale:");
     if (password === "fantazanteok") {
-        db.collection('totalResults').get().then(querySnapshot => {
-            querySnapshot.forEach(doc => {
-                doc.ref.delete();
+        database.ref('totalResults').remove()
+            .then(() => {
+                updateResults();
+                alert("Classifica totale resettata con successo.");
+            }).catch(error => {
+                console.error("Error resetting total scores:", error);
             });
-        }).then(() => {
-            updateResults();
-            alert("Classifica totale resettata con successo.");
-        }).catch(error => {
-            console.error("Error resetting total scores:", error);
-        });
     } else {
         alert("Password errata.");
     }
@@ -77,10 +73,10 @@ function resetTotalScores() {
 // Funzione per aggiornare i risultati
 function updateResults() {
     // Recupera i risultati giornalieri
-    db.collection('dailyResults').get().then(querySnapshot => {
+    database.ref('dailyResults').once('value').then(snapshot => {
         const dailyResults = [];
-        querySnapshot.forEach(doc => {
-            dailyResults.push(doc.data());
+        snapshot.forEach(childSnapshot => {
+            dailyResults.push(childSnapshot.val());
         });
 
         const dailyResultDiv = document.getElementById('dailyResult');
@@ -94,10 +90,10 @@ function updateResults() {
     });
 
     // Recupera i risultati totali
-    db.collection('totalResults').get().then(querySnapshot => {
+    database.ref('totalResults').once('value').then(snapshot => {
         const sortedTotalResults = [];
-        querySnapshot.forEach(doc => {
-            sortedTotalResults.push({ nickname: doc.id, score: doc.data().score });
+        snapshot.forEach(childSnapshot => {
+            sortedTotalResults.push({ nickname: childSnapshot.key, score: childSnapshot.val() });
         });
 
         sortedTotalResults.sort((a, b) => b.score - a.score);
