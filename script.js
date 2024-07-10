@@ -1,4 +1,5 @@
-const results = [];
+const dailyResults = [];
+const totalResults = {};
 
 function submitForm() {
     const nickname = document.getElementById('nickname').value;
@@ -9,16 +10,43 @@ function submitForm() {
         score += parseInt(checkbox.value);
     });
 
-    results.push({ nickname, score });
+    // Aggiorna la classifica giornaliera
+    dailyResults.push({ nickname, score });
+    
+    // Aggiorna la classifica totale
+    if (totalResults[nickname]) {
+        totalResults[nickname] += score;
+    } else {
+        totalResults[nickname] = score;
+    }
+
     updateResults();
 }
 
-function updateResults() {
-    const resultDiv = document.getElementById('result');
-    resultDiv.innerHTML = '<h2>Classifica</h2>';
+function resetDailyScores() {
+    dailyResults.length = 0; // Resetta l'array dei risultati giornalieri
+    updateResults(); // Aggiorna la visualizzazione
+}
 
-    results.sort((a, b) => b.score - a.score);
-    results.forEach((result, index) => {
-        resultDiv.innerHTML += `<p>${index + 1}. ${result.nickname} - ${result.score} punti</p>`;
+function updateResults() {
+    // Aggiorna la visualizzazione della classifica giornaliera
+    const dailyResultDiv = document.getElementById('dailyResult');
+    dailyResultDiv.innerHTML = '<h2>Classifica Giornaliera</h2>';
+
+    dailyResults.sort((a, b) => b.score - a.score);
+    dailyResults.forEach((result, index) => {
+        dailyResultDiv.innerHTML += `<p>${index + 1}. ${result.nickname} - ${result.score} punti</p>`;
+    });
+
+    // Aggiorna la visualizzazione della classifica totale
+    const totalResultDiv = document.getElementById('totalResult');
+    totalResultDiv.innerHTML = '<h2>Classifica Totale</h2>';
+
+    const sortedTotalResults = Object.keys(totalResults)
+        .map(nickname => ({ nickname, score: totalResults[nickname] }))
+        .sort((a, b) => b.score - a.score);
+
+    sortedTotalResults.forEach((result, index) => {
+        totalResultDiv.innerHTML += `<p>${index + 1}. ${result.nickname} - ${result.score} punti</p>`;
     });
 }
