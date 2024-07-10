@@ -14,6 +14,16 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const database = firebase.database();
 
+FileInputStream serviceAccount =
+new FileInputStream("path/to/serviceAccountKey.json");
+
+FirebaseOptions options = new FirebaseOptions.Builder()
+  .setCredentials(GoogleCredentials.fromStream(serviceAccount))
+  .setDatabaseUrl("https://fantazante-36bd2-default-rtdb.europe-west1.firebasedatabase.app")
+  .build();
+
+FirebaseApp.initializeApp(options);
+
 // Funzione per inviare i dati al database
 async function submitForm() {
     const nickname = document.getElementById('nickname').value;
