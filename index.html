@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Selezione Punteggi</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Seleziona le Caselle</h1>
+        <form id="selectionForm">
+            <label for="nickname">Nickname:</label>
+            <input type="text" id="nickname" name="nickname" required>
+            <div class="checkboxes">
+                <label><input type="checkbox" name="box" value="1"> Casella 1 (1 punto)</label>
+                <label><input type="checkbox" name="box" value="2"> Casella 2 (2 punti)</label>
+                <label><input type="checkbox" name="box" value="3"> Casella 3 (3 punti)</label>
+                <label><input type="checkbox" name="box" value="4"> Casella 4 (4 punti)</label>
+                <!-- Aggiungi altre caselle fino a 20 -->
+            </div>
+            <button type="button" onclick="submitForm()">Invia</button>
+        </form>
+        <div id="result"></div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
