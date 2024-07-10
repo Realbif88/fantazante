@@ -25,17 +25,21 @@ async function submitForm() {
 
     console.log(`Submitting data - Nickname: ${nickname}, Score: ${score}`);
 
-    // Aggiorna la classifica giornaliera
-    const dailyRef = db.collection('dailyResults');
-    await dailyRef.add({ nickname, score });
+    try {
+        // Aggiorna la classifica giornaliera
+        const dailyRef = db.collection('dailyResults');
+        await dailyRef.add({ nickname, score });
 
-    // Aggiorna la classifica totale
-    const totalRef = db.collection('totalResults').doc(nickname);
-    const doc = await totalRef.get();
-    const currentScore = doc.exists ? doc.data().score : 0;
-    await totalRef.set({ score: currentScore + score });
+        // Aggiorna la classifica totale
+        const totalRef = db.collection('totalResults').doc(nickname);
+        const doc = await totalRef.get();
+        const currentScore = doc.exists ? doc.data().score : 0;
+        await totalRef.set({ score: currentScore + score });
 
-    updateResults();
+        updateResults();
+    } catch (error) {
+        console.error("Error submitting data:", error);
+    }
 }
 
 // Funzione per resettare i punteggi giornalieri
