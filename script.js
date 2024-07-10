@@ -1,4 +1,4 @@
-// Configurazione di Firebase (sostituisci con le tue credenziali)
+// Configurazione di Firebase
 const firebaseConfig = {
     apiKey: "AIzaSyA5CWWuc4bZ3phF5kc_Ewa7f1ccA8oqFW4",
     authDomain: "fantazante-c754f.firebaseapp.com",
@@ -23,18 +23,22 @@ async function submitForm() {
         score += parseInt(checkbox.value);
     });
 
+    console.log(`Submitting data - Nickname: ${nickname}, Score: ${score}`);
+
     // Aggiorna la classifica giornaliera
     const dailyRef = database.ref('dailyResults');
-    dailyRef.push({ nickname, score });
+    await dailyRef.push({ nickname, score });
 
     // Aggiorna la classifica totale
     const totalRef = database.ref('totalResults/' + nickname);
     totalRef.once('value').then(snapshot => {
         const currentScore = snapshot.val() || 0;
         totalRef.set(currentScore + score);
+    }).then(() => {
+        updateResults();
+    }).catch(error => {
+        console.error("Error updating total scores:", error);
     });
-
-    updateResults();
 }
 
 // Funzione per resettare i punteggi giornalieri
@@ -43,6 +47,8 @@ function resetDailyScores() {
         .then(() => {
             updateResults();
             alert("Classifica giornaliera resettata.");
+        }).catch(error => {
+            console.error("Error resetting daily scores:", error);
         });
 }
 
@@ -54,6 +60,8 @@ function resetTotalScores() {
             .then(() => {
                 updateResults();
                 alert("Classifica totale resettata con successo.");
+            }).catch(error => {
+                console.error("Error resetting total scores:", error);
             });
     } else {
         alert("Password errata.");
@@ -73,6 +81,8 @@ function updateResults() {
         dailyResults.forEach((result, index) => {
             dailyResultDiv.innerHTML += `<p>${index + 1}. ${result.nickname} - ${result.score} punti</p>`;
         });
+    }).catch(error => {
+        console.error("Error retrieving daily scores:", error);
     });
 
     // Recupera i risultati totali
@@ -88,8 +98,5 @@ function updateResults() {
         sortedTotalResults.forEach((result, index) => {
             totalResultDiv.innerHTML += `<p>${index + 1}. ${result.nickname} - ${result.score} punti</p>`;
         });
-    });
-}
-
-// Aggiorna le classifiche al caricamento della pagina
-document.addEventListener('DOMContentLoaded', updateResults);
+    }).catch(error => {
+        console.error
