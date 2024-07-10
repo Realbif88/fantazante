@@ -15,16 +15,18 @@
         <label>Seleziona le caselle:</label>
         <br>
         <!-- Aggiungi qui le tue 20 caselle di selezione -->
-        <input type="checkbox" name="box" value="1"> Ultimo che arriva a Colazione  (-20 punti)<br>
-        <input type="checkbox" name="box" value="2"> Bevi 1 drink (alcolico) in giornata (10 punti)<br>
-        <input type="checkbox" name="box" value="1"> Chiedere info stupide a uno sconosciuto  (10 punti)<br>
-        <input type="checkbox" name="box" value="2"> Bevi 1 drink (alcolico) in giornata (10 punti)<br>
+        <input type="checkbox" name="box" value="1"> Casella 1 (1 punto)<br>
+        <input type="checkbox" name="box" value="2"> Casella 2 (2 punti)<br>
         <!-- Ripeti per tutte le caselle -->
         <button type="submit">Invia</button>
     </form>
 
     <button onclick="resetDailyScores()">Reset Classifica Giornaliera</button>
     <button onclick="resetTotalScores()">Reset Classifica Totale</button>
+
+    <h2>Visualizza Classifica Giornaliera per Nickname</h2>
+    <input type="text" id="viewNickname" placeholder="Inserisci il tuo nickname">
+    <button onclick="viewDailyScore()">Visualizza</button>
 
     <div id="dailyResult">
         <h2>Classifica Giornaliera</h2>
