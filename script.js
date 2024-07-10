@@ -1,28 +1,16 @@
 // Configurazione di Firebase
 const firebaseConfig = {
-    apiKey: "AIzaSyB5S_sQKbmFUOHZlHbk9SrIhvuCRnuDEAc",
-    authDomain: "fantazante-36bd2.firebaseapp.com",
-    databaseURL: "https://fantazante-36bd2-default-rtdb.europe-west1.firebasedatabase.app",
-    projectId: "fantazante-36bd2",
-    storageBucket: "fantazante-36bd2.appspot.com",
-    messagingSenderId: "192840108739",
-    appId: "1:192840108739:web:08fead29a92b172cb93076"
-    measurementId: "G-H34G804QBT"
+    apiKey: "AIzaSyCvaKb_04q7AH9p9xAKQft-mb3-IpWTTtM",
+    authDomain: "fantazante24.firebaseapp.com",
+    databaseURL: "https://fantazante24-default-rtdb.europe-west1.firebasedatabase.app",
+    projectId: "fantazante24",
+    storageBucket: "fantazante24.appspot.com",
+    messagingSenderId: "855297509496",
+    appId: "1:855297509496:web:b92ea9f3035ed7e98d458d"
 };
 
-// Inizializza Firebase e Realtime Database
 firebase.initializeApp(firebaseConfig);
 const database = firebase.database();
-
-FileInputStream serviceAccount =
-new FileInputStream("path/to/serviceAccountKey.json");
-
-FirebaseOptions options = new FirebaseOptions.Builder()
-  .setCredentials(GoogleCredentials.fromStream(serviceAccount))
-  .setDatabaseUrl("https://fantazante-36bd2-default-rtdb.europe-west1.firebasedatabase.app")
-  .build();
-
-FirebaseApp.initializeApp(options);
 
 // Funzione per inviare i dati al database
 async function submitForm() {
@@ -38,8 +26,8 @@ async function submitForm() {
 
     try {
         // Aggiorna la classifica giornaliera
-        const dailyRef = database.ref('dailyResults');
-        await dailyRef.push({ nickname, score });
+        const dailyRef = database.ref('dailyResults').push();
+        await dailyRef.set({ nickname, score });
 
         // Aggiorna la classifica totale
         const totalRef = database.ref('totalResults/' + nickname);
