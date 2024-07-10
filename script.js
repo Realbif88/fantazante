@@ -1,8 +1,20 @@
-// Inizializza le classifiche con i dati salvati in localStorage
-let dailyResults = JSON.parse(localStorage.getItem('dailyResults')) || [];
-let totalResults = JSON.parse(localStorage.getItem('totalResults')) || {};
+// Configurazione di Firebase (sostituisci con le tue credenziali)
+const firebaseConfig = {
+  apiKey: "AIzaSyA5CWWuc4bZ3phF5kc_Ewa7f1ccA8oqFW4",
+  authDomain: "fantazante-c754f.firebaseapp.com",
+  projectId: "fantazante-c754f",
+  storageBucket: "fantazante-c754f.appspot.com",
+  messagingSenderId: "340578088140",
+  appId: "1:340578088140:web:bfdf9e2b2b3daf875cfe69",
+  measurementId: "G-H34G804QBT"
+};
 
-function submitForm() {
+// Inizializza Firebase
+firebase.initializeApp(firebaseConfig);
+const database = firebase.database();
+
+// Funzione per inviare i dati al database
+async function submitForm() {
     const nickname = document.getElementById('nickname').value;
     const checkboxes = document.querySelectorAll('input[name="box"]:checked');
     let score = 0;
@@ -12,58 +24,70 @@ function submitForm() {
     });
 
     // Aggiorna la classifica giornaliera
-    dailyResults.push({ nickname, score });
-    localStorage.setItem('dailyResults', JSON.stringify(dailyResults));
-    
+    const dailyRef = database.ref('dailyResults');
+    dailyRef.push({ nickname, score });
+
     // Aggiorna la classifica totale
-    if (totalResults[nickname]) {
-        totalResults[nickname] += score;
-    } else {
-        totalResults[nickname] = score;
-    }
-    localStorage.setItem('totalResults', JSON.stringify(totalResults));
+    const totalRef = database.ref('totalResults/' + nickname);
+    totalRef.once('value').then(snapshot => {
+        const currentScore = snapshot.val() || 0;
+        totalRef.set(currentScore + score);
+    });
 
     updateResults();
 }
 
+// Funzione per resettare i punteggi giornalieri
 function resetDailyScores() {
-    dailyResults = []; // Resetta l'array dei risultati giornalieri
-    localStorage.setItem('dailyResults', JSON.stringify(dailyResults));
-    updateResults(); // Aggiorna la visualizzazione
+    database.ref('dailyResults').remove()
+        .then(() => {
+            updateResults();
+            alert("Classifica giornaliera resettata.");
+        });
 }
 
+// Funzione per resettare i punteggi totali
 function resetTotalScores() {
     const password = prompt("Inserisci la password per resettare la classifica totale:");
     if (password === "fantazanteok") {
-        totalResults = {}; // Resetta l'oggetto dei risultati totali
-        localStorage.setItem('totalResults', JSON.stringify(totalResults));
-        updateResults(); // Aggiorna la visualizzazione
-        alert("Classifica totale resettata con successo.");
+        database.ref('totalResults').remove()
+            .then(() => {
+                updateResults();
+                alert("Classifica totale resettata con successo.");
+            });
     } else {
         alert("Password errata.");
     }
 }
 
+// Funzione per aggiornare i risultati
 function updateResults() {
-    // Aggiorna la visualizzazione della classifica giornaliera
-    const dailyResultDiv = document.getElementById('dailyResult');
-    dailyResultDiv.innerHTML = '<h2>Classifica Giornaliera</h2>';
-
-    dailyResults.sort((a, b) => b.score - a.score);
-    dailyResults.forEach((result, index) => {
-        dailyResultDiv.innerHTML += `<p>${index + 1}. ${result.nickname} - ${result.score} punti</p>`;
+    // Recupera i risultati giornalieri
+    const dailyRef = database.ref('dailyResults');
+    dailyRef.once('value').then(snapshot => {
+        const data = snapshot.val() || {};
+        const dailyResults = Object.values(data);
+        const dailyResultDiv = document.getElementById('dailyResult');
+        dailyResultDiv.innerHTML = '<h2>Classifica Giornaliera</h2>';
+        dailyResults.sort((a, b) => b.score - a.score);
+        dailyResults.forEach((result, index) => {
+            dailyResultDiv.innerHTML += `<p>${index + 1}. ${result.nickname} - ${result.score} punti</p>`;
+        });
     });
 
-    // Aggiorna la visualizzazione della classifica totale
-    const totalResultDiv = document.getElementById('totalResult');
-    totalResultDiv.innerHTML = '<h2>Classifica Totale</h2>';
+    // Recupera i risultati totali
+    const totalRef = database.ref('totalResults');
+    totalRef.once('value').then(snapshot => {
+        const data = snapshot.val() || {};
+        const sortedTotalResults = Object.keys(data)
+            .map(nickname => ({ nickname, score: data[nickname] }))
+            .sort((a, b) => b.score - a.score);
 
-    const sortedTotalResults = Object.keys(totalResults)
-        .map(nickname => ({ nickname, score: totalResults[nickname] }))
-        .sort((a, b) => b.score - a.score);
-
-    sortedTotalResults.forEach((result, index) => {
-        totalResultDiv.innerHTML += `<p>${index + 1}. ${result.nickname} - ${result.score} punti</p>`;
+        const totalResultDiv = document.getElementById('totalResult');
+        totalResultDiv.innerHTML = '<h2>Classifica Totale</h2>';
+        sortedTotalResults.forEach((result, index) => {
+            totalResultDiv.innerHTML += `<p>${index + 1}. ${result.nickname} - ${result.score} punti</p>`;
+        });
     });
 }
 
