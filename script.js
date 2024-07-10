@@ -1,12 +1,11 @@
-// Configurazione di Firebase
 const firebaseConfig = {
-    apiKey: "AIzaSyA5CWWuc4bZ3phF5kc_Ewa7f1ccA8oqFW4",
-    authDomain: "fantazante-c754f.firebaseapp.com",
-    projectId: "fantazante-c754f",
-    storageBucket: "fantazante-c754f.appspot.com",
-    messagingSenderId: "340578088140",
-    appId: "1:340578088140:web:bfdf9e2b2b3daf875cfe69",
-    measurementId: "G-H34G804QBT"
+  apiKey: "AIzaSyB5S_sQKbmFUOHZlHbk9SrIhvuCRnuDEAc",
+  authDomain: "fantazante-36bd2.firebaseapp.com",
+  projectId: "fantazante-36bd2",
+  storageBucket: "fantazante-36bd2.appspot.com",
+  messagingSenderId: "192840108739",
+  appId: "1:192840108739:web:08fead29a92b172cb93076"
+};
 };
 
 // Inizializza Firebase e Firestore
