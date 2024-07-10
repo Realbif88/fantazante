@@ -32,6 +32,18 @@ function resetDailyScores() {
     updateResults(); // Aggiorna la visualizzazione
 }
 
+function resetTotalScores() {
+    const password = prompt("Inserisci la password per resettare la classifica totale:");
+    if (password === "fantazanteok") {
+        totalResults = {}; // Resetta l'oggetto dei risultati totali
+        localStorage.setItem('totalResults', JSON.stringify(totalResults));
+        updateResults(); // Aggiorna la visualizzazione
+        alert("Classifica totale resettata con successo.");
+    } else {
+        alert("Password errata.");
+    }
+}
+
 function updateResults() {
     // Aggiorna la visualizzazione della classifica giornaliera
     const dailyResultDiv = document.getElementById('dailyResult');
