@@ -9,9 +9,9 @@ const firebaseConfig = {
     measurementId: "G-H34G804QBT"
 };
 
-// Inizializza Firebase
+// Inizializza Firebase e Firestore
 firebase.initializeApp(firebaseConfig);
-const database = firebase.database();
+const db = firebase.firestore();
 
 // Funzione per inviare i dati al database
 async function submitForm() {
@@ -26,43 +26,46 @@ async function submitForm() {
     console.log(`Submitting data - Nickname: ${nickname}, Score: ${score}`);
 
     // Aggiorna la classifica giornaliera
-    const dailyRef = database.ref('dailyResults');
-    await dailyRef.push({ nickname, score });
+    const dailyRef = db.collection('dailyResults');
+    await dailyRef.add({ nickname, score });
 
     // Aggiorna la classifica totale
-    const totalRef = database.ref('totalResults/' + nickname);
-    totalRef.once('value').then(snapshot => {
-        const currentScore = snapshot.val() || 0;
-        totalRef.set(currentScore + score);
-    }).then(() => {
-        updateResults();
-    }).catch(error => {
-        console.error("Error updating total scores:", error);
-    });
+    const totalRef = db.collection('totalResults').doc(nickname);
+    const doc = await totalRef.get();
+    const currentScore = doc.exists ? doc.data().score : 0;
+    await totalRef.set({ score: currentScore + score });
+
+    updateResults();
 }
 
 // Funzione per resettare i punteggi giornalieri
 function resetDailyScores() {
-    database.ref('dailyResults').remove()
-        .then(() => {
-            updateResults();
-            alert("Classifica giornaliera resettata.");
-        }).catch(error => {
-            console.error("Error resetting daily scores:", error);
+    db.collection('dailyResults').get().then(querySnapshot => {
+        querySnapshot.forEach(doc => {
+            doc.ref.delete();
         });
+    }).then(() => {
+        updateResults();
+        alert("Classifica giornaliera resettata.");
+    }).catch(error => {
+        console.error("Error resetting daily scores:", error);
+    });
 }
 
 // Funzione per resettare i punteggi totali
 function resetTotalScores() {
     const password = prompt("Inserisci la password per resettare la classifica totale:");
     if (password === "fantazanteok") {
-        database.ref('totalResults').remove()
-            .then(() => {
-                updateResults();
-                alert("Classifica totale resettata con successo.");
-            }).catch(error => {
-                console.error("Error resetting total scores:", error);
+        db.collection('totalResults').get().then(querySnapshot => {
+            querySnapshot.forEach(doc => {
+                doc.ref.delete();
             });
+        }).then(() => {
+            updateResults();
+            alert("Classifica totale resettata con successo.");
+        }).catch(error => {
+            console.error("Error resetting total scores:", error);
+        });
     } else {
         alert("Password errata.");
     }
@@ -71,10 +74,12 @@ function resetTotalScores() {
 // Funzione per aggiornare i risultati
 function updateResults() {
     // Recupera i risultati giornalieri
-    const dailyRef = database.ref('dailyResults');
-    dailyRef.once('value').then(snapshot => {
-        const data = snapshot.val() || {};
-        const dailyResults = Object.values(data);
+    db.collection('dailyResults').get().then(querySnapshot => {
+        const dailyResults = [];
+        querySnapshot.forEach(doc => {
+            dailyResults.push(doc.data());
+        });
+
         const dailyResultDiv = document.getElementById('dailyResult');
         dailyResultDiv.innerHTML = '<h2>Classifica Giornaliera</h2>';
         dailyResults.sort((a, b) => b.score - a.score);
@@ -86,12 +91,13 @@ function updateResults() {
     });
 
     // Recupera i risultati totali
-    const totalRef = database.ref('totalResults');
-    totalRef.once('value').then(snapshot => {
-        const data = snapshot.val() || {};
-        const sortedTotalResults = Object.keys(data)
-            .map(nickname => ({ nickname, score: data[nickname] }))
-            .sort((a, b) => b.score - a.score);
+    db.collection('totalResults').get().then(querySnapshot => {
+        const sortedTotalResults = [];
+        querySnapshot.forEach(doc => {
+            sortedTotalResults.push({ nickname: doc.id, score: doc.data().score });
+        });
+
+        sortedTotalResults.sort((a, b) => b.score - a.score);
 
         const totalResultDiv = document.getElementById('totalResult');
         totalResultDiv.innerHTML = '<h2>Classifica Totale</h2>';
@@ -99,4 +105,9 @@ function updateResults() {
             totalResultDiv.innerHTML += `<p>${index + 1}. ${result.nickname} - ${result.score} punti</p>`;
         });
     }).catch(error => {
-        console.error
+        console.error("Error retrieving total scores:", error);
+    });
+}
+
+// Aggiorna le classifiche al caricamento della pagina
+document.addEventListener('DOMContentLoaded', updateResults);
