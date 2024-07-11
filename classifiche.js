@@ -111,4 +111,87 @@ function promptPassword(target) {
 // Funzione per verificare la password
 function verifyPassword() {
     const password = document.getElementById('adminPassword').value;
-    if (password === 'Admin') 
+    if (password === 'Admin') {
+        $('#passwordModal').modal('hide');
+        if (resetTarget === 'daily') {
+            resetDailyResults();
+        } else if (resetTarget === 'total') {
+            resetTotalResults();
+        }
+    } else {
+        alert('Password errata!');
+    }
+}
+
+// Funzione per resettare la classifica giornaliera
+function resetDailyResults() {
+    const dailyResultsRef = database.ref('dailyResults');
+    dailyResultsRef.remove()
+        .then(() => {
+            alert('Classifica giornaliera resettata!');
+            fetchDailyResults();
+        })
+        .catch(error => {
+            console.error('Errore durante il reset della classifica giornaliera:', error);
+        });
+}
+
+// Funzione per resettare la classifica generale
+function resetTotalResults() {
+    const totalResultsRef = database.ref('totalResults');
+    totalResultsRef.remove()
+        .then(() => {
+            alert('Classifica generale resettata!');
+            fetchTotalResults();
+        })
+        .catch(error => {
+            console.error('Errore durante il reset della classifica generale:', error);
+        });
+}
+
+// Funzione per copiare i risultati giornalieri in uno dei moduli
+function copyDailyResults() {
+    const dailyResultsRef = database.ref('dailyResults');
+    const dailyModulesRef = database.ref('dailyModules');
+
+    dailyModulesRef.once('value')
+        .then(snapshot => {
+            const data = snapshot.val();
+            let dayIndex = 1;
+
+            // Trova il primo modulo vuoto
+            while (dayIndex <= 8 && data && data[`day${dayIndex}`]) {
+                dayIndex++;
+            }
+
+            if (dayIndex > 8) {
+                alert('Tutti i moduli sono pieni.');
+                return;
+            }
+
+            // Copia i risultati giornalieri nel modulo trovato
+            dailyResultsRef.once('value', snapshot => {
+                const dailyData = snapshot.val();
+                if (dailyData) {
+                    dailyModulesRef.child(`day${dayIndex}`).set(dailyData)
+                        .then(() => {
+                            alert(`Risultati copiati nel modulo Giorno ${dayIndex}`);
+                            fetchDailyModules();
+                        })
+                        .catch(error => {
+                            console.error('Errore durante la copia dei risultati giornalieri:', error);
+                        });
+                } else {
+                    alert('Nessun dato giornaliero da copiare.');
+                }
+            }).catch(error => {
+                console.error('Errore durante il recupero dei dati giornalieri:', error);
+            });
+        })
+        .catch(error => {
+            console.error('Errore durante il recupero dei moduli giornalieri:', error);
+        });
+}
+
+// Recupera i risultati quando la pagina viene caricata
+window.onload = fetchResults;
