@@ -13,33 +13,47 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const database = firebase.database();
 
-// Funzione per recuperare e visualizzare i dati del profilo
+// Funzione per ottenere i dati del profilo
 function fetchProfileData() {
     const nickname = document.getElementById('profileNickname').value;
     if (!nickname) {
-        alert('Inserisci un nickname per visualizzare il profilo.');
+        alert('Per favore inserisci un nickname.');
         return;
     }
 
     const userRef = database.ref(`userProfiles/${nickname}`);
-    
+
     userRef.once('value')
         .then(snapshot => {
             const data = snapshot.val();
-            const profileResultsContainer = document.getElementById('profileResultsContainer');
-            profileResultsContainer.innerHTML = ''; // Pulisce il contenitore
-
             if (data) {
-                Object.entries(data).forEach(([day, score]) => {
-                    profileResultsContainer.innerHTML += `
-                        <p>${day}: ${score} punti</p>
-                    `;
-                });
+                displayProfileData(data);
             } else {
-                profileResultsContainer.innerHTML = `<p>Nessun dato trovato per il nickname '${nickname}'.</p>`;
+                alert('Nessun dato trovato per questo nickname.');
             }
         })
         .catch(error => {
-            console.error('Errore durante il recupero dei dati del profilo:', error);
+            console.error('Errore durante il recupero dei dati:', error);
         });
+}
+
+// Funzione per visualizzare i dati del profilo
+function displayProfileData(data) {
+    const container = document.getElementById('profileResultsContainer');
+    container.innerHTML = '';
+
+    // Definisci i nomi delle caselle per visualizzare i dati
+    const checkboxes = [
+        'Casella 1', 'Casella 2', 'Casella 3', 'Casella 4', 'Casella 5',
+        'Casella 6', 'Casella 7', 'Casella 8', 'Casella 9', 'Casella 10',
+        'Casella 11', 'Casella 12', 'Casella 13', 'Casella 14', 'Casella 15',
+        'Casella 16', 'Casella 17', 'Casella 18', 'Casella 19', 'Casella 20'
+    ];
+
+    checkboxes.forEach((label, index) => {
+        const checkboxId = `checkbox${index + 1}`;
+        if (data[checkboxId]) {
+            container.innerHTML += `<p>${label} - Spuntata</p>`;
+        }
+    });
 }
