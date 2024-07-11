@@ -7,6 +7,7 @@
 </head>
 <body>
     <h1>Benvenuto nella Classifica</h1>
+    <button onclick="logoutUser()">Logout</button>
 
     <form onsubmit="submitForm(); return false;">
         <label for="nickname">Nickname:</label>
@@ -34,6 +35,7 @@
 
     <!-- Includi gli script di Firebase -->
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
     <!-- Includi il tuo script -->
     <script src="script.js"></script>
