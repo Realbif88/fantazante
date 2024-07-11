@@ -19,6 +19,7 @@ let resetTarget = '';
 function fetchResults() {
     fetchDailyResults();
     fetchTotalResults();
+    fetchDailyModules();
 }
 
 // Funzione per recuperare e visualizzare i risultati giornalieri
@@ -69,6 +70,38 @@ function fetchTotalResults() {
     });
 }
 
+// Funzione per recuperare e visualizzare i moduli giornalieri
+function fetchDailyModules() {
+    const dailyModulesRef = database.ref('dailyModules');
+
+    dailyModulesRef.once('value', snapshot => {
+        const data = snapshot.val();
+        const dailyModulesContainer = document.getElementById('dailyModulesContainer');
+        dailyModulesContainer.innerHTML = ''; // Pulisce il contenitore
+
+        if (data !== null) {
+            for (let i = 1; i <= 8; i++) {
+                const dayData = data[`day${i}`];
+                dailyModulesContainer.innerHTML += `<h3>Giorno ${i}</h3>`;
+                if (dayData) {
+                    const sortedResults = Object.entries(dayData).sort((a, b) => b[1] - a[1]);
+                    sortedResults.forEach(([nickname, score]) => {
+                        dailyModulesContainer.innerHTML += `<p>${nickname}: ${score} punti</p>`;
+                    });
+                } else {
+                    dailyModulesContainer.innerHTML += `<p>Nessun dato trovato.</p>`;
+                }
+            }
+        } else {
+            for (let i = 1; i <= 8; i++) {
+                dailyModulesContainer.innerHTML += `<h3>Giorno ${i}</h3><p>Nessun dato trovato.</p>`;
+            }
+        }
+    }).catch(error => {
+        console.error('Errore durante il recupero dei moduli giornalieri:', error);
+    });
+}
+
 // Funzione per richiedere la password
 function promptPassword(target) {
     resetTarget = target;
@@ -78,43 +111,4 @@ function promptPassword(target) {
 // Funzione per verificare la password
 function verifyPassword() {
     const password = document.getElementById('adminPassword').value;
-    if (password === 'Admin') {
-        $('#passwordModal').modal('hide');
-        if (resetTarget === 'daily') {
-            resetDailyResults();
-        } else if (resetTarget === 'total') {
-            resetTotalResults();
-        }
-    } else {
-        alert('Password errata!');
-    }
-}
-
-// Funzione per resettare la classifica giornaliera
-function resetDailyResults() {
-    const dailyResultsRef = database.ref('dailyResults');
-    dailyResultsRef.remove()
-        .then(() => {
-            alert('Classifica giornaliera resettata!');
-            fetchDailyResults();
-        })
-        .catch(error => {
-            console.error('Errore durante il reset della classifica giornaliera:', error);
-        });
-}
-
-// Funzione per resettare la classifica generale
-function resetTotalResults() {
-    const totalResultsRef = database.ref('totalResults');
-    totalResultsRef.remove()
-        .then(() => {
-            alert('Classifica generale resettata!');
-            fetchTotalResults();
-        })
-        .catch(error => {
-            console.error('Errore durante il reset della classifica generale:', error);
-        });
-}
-
-// Recupera i risultati quando la pagina viene caricata
-window.onload = fetchResults;
+    if (password === 'Admin') 
