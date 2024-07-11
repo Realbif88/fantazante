@@ -18,6 +18,7 @@ function sendResults() {
     const nickname = document.getElementById('nickname').value;
     const checkboxes = document.querySelectorAll('input[type="checkbox"]');
     const dailyResultsRef = database.ref('dailyResults/' + nickname);
+    const totalResultsRef = database.ref('totalResults/' + nickname);
 
     let totalScore = 0;
     checkboxes.forEach(checkbox => {
@@ -26,12 +27,23 @@ function sendResults() {
         }
     });
 
-    // Salva il punteggio totale per il nickname
+    // Salva il punteggio totale per il nickname nella classifica giornaliera
     dailyResultsRef.set(totalScore)
         .then(() => {
-            alert('Dati inviati con successo!');
+            alert('Dati giornalieri inviati con successo!');
         })
         .catch(error => {
-            console.error('Errore durante l\'invio dei dati:', error);
+            console.error('Errore durante l\'invio dei dati giornalieri:', error);
         });
+
+    // Aggiorna il punteggio totale per il nickname nella classifica generale
+    totalResultsRef.transaction(currentTotal => {
+        return (currentTotal || 0) + totalScore;
+    })
+    .then(() => {
+        console.log('Classifica generale aggiornata con successo!');
+    })
+    .catch(error => {
+        console.error('Errore durante l\'aggiornamento della classifica generale:', error);
+    });
 }
