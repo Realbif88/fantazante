@@ -50,4 +50,15 @@ function fetchTotalResults(nickname) {
         const data = snapshot.val();
         const totalResultsContainer = document.getElementById('totalResultsContainer');
 
-        if (data !
+        if (data !== null) {
+            totalResultsContainer.innerHTML = `
+                <h3>Classifica Generale per ${nickname}</h3>
+                <p>Punteggio Totale: ${data}</p>
+            `;
+        } else {
+            totalResultsContainer.innerHTML = `<p>Nessun dato trovato per il nickname "${nickname}".</p>`;
+        }
+    }).catch(error => {
+        console.error('Errore durante il recupero dei dati generali:', error);
+    });
+}
