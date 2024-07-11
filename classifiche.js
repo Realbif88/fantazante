@@ -13,35 +13,24 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const database = firebase.database();
 
-// Funzione per caricare i nickname
-function loadNicknames() {
-    database.ref('dailyResults').once('value').then(snapshot => {
-        const nicknames = [];
-        snapshot.forEach(childSnapshot => {
-            const nickname = childSnapshot.key;
-            if (!nicknames.includes(nickname)) {
-                nicknames.push(nickname);
-            }
-        });
+// Funzione per recuperare e visualizzare i risultati
+function fetchResults() {
+    const nickname = document.getElementById('nicknameInput').value;
+    const resultsRef = database.ref('dailyResults/' + nickname);
 
-        const nicknameSelect = document.getElementById('nicknameSelect');
-        nicknames.forEach(nickname => {
-            const option = document.createElement('option');
-            option.value = nickname;
-            option.textContent = nickname;
-            nicknameSelect.appendChild(option);
-        });
+    resultsRef.once('value', snapshot => {
+        const data = snapshot.val();
+        const resultsContainer = document.getElementById('resultsContainer');
+
+        if (data !== null) {
+            resultsContainer.innerHTML = `
+                <h3>Classifica per ${nickname}</h3>
+                <p>Punteggio Totale: ${data}</p>
+            `;
+        } else {
+            resultsContainer.innerHTML = `<p>Nessun dato trovato per il nickname "${nickname}".</p>`;
+        }
     }).catch(error => {
-        console.error("Error loading nicknames:", error);
+        console.error('Errore durante il recupero dei dati:', error);
     });
 }
-
-// Funzione per caricare la classifica per un nickname selezionato
-function loadNicknameClassifica() {
-    const nickname = document.getElementById('nicknameSelect').value;
-    const classificaSezioni = document.getElementById('classificaSezioni');
-    
-    classificaSezioni.innerHTML = '';
-
-    // Aggiungi 8 moduli per la classifica
-   
