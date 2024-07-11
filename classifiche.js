@@ -44,39 +44,4 @@ function loadNicknameClassifica() {
     classificaSezioni.innerHTML = '';
 
     // Aggiungi 8 moduli per la classifica
-    for (let i = 1; i <= 8; i++) {
-        const section = document.createElement('div');
-        section.classList.add('result-section');
-        section.id = `section${i}`;
-        section.innerHTML = `<h2>Classifica Sezione ${i}</h2><ul id="list${i}"></ul>`;
-        classificaSezioni.appendChild(section);
-    }
-
-    database.ref('dailyResults').once('value').then(snapshot => {
-        const results = [];
-        snapshot.forEach(childSnapshot => {
-            const key = childSnapshot.key;
-            if (key === nickname) {
-                results.push({ nickname: key, score: childSnapshot.val() });
-            }
-        });
-
-        results.sort((a, b) => b.score - a.score);
-
-        // Distribuisci i risultati nelle 8 sezioni
-        const sections = document.querySelectorAll('#classificaSezioni .result-section');
-        results.forEach((result, index) => {
-            const sectionIndex = index % 8;
-            const section = sections[sectionIndex];
-            const list = section.querySelector(`#list${sectionIndex + 1}`);
-            const listItem = document.createElement('li');
-            listItem.textContent = `${result.nickname} - ${result.score} punti`;
-            list.appendChild(listItem);
-        });
-    }).catch(error => {
-        console.error("Error retrieving daily scores:", error);
-    });
-}
-
-// Carica i nickname quando la pagina è pronta
-document.addEventListener('DOMContentLoaded', loadNicknames);
+   
