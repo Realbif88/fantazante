@@ -76,33 +76,79 @@ function fetchDailyModules() {
 
     dailyModulesRef.once('value', snapshot => {
         const data = snapshot.val();
-        const dailyModulesContainer = document.getElementById('dailyModulesContainer');
+        const dailyModulesContainer = document.getElementById('dailyModulesAccordion');
         dailyModulesContainer.innerHTML = ''; // Pulisce il contenitore
 
         if (data !== null) {
             for (let i = 1; i <= 8; i++) {
                 const dayData = data[`day${i}`];
-                dailyModulesContainer.innerHTML += `<h3>Giorno ${i}</h3>`;
+                let content = '';
                 if (dayData) {
                     const sortedResults = Object.entries(dayData).sort((a, b) => b[1] - a[1]);
                     sortedResults.forEach(([nickname, score]) => {
-                        dailyModulesContainer.innerHTML += `<p>${nickname}: ${score} punti</p>`;
+                        content += `<p>${nickname}: ${score} punti</p>`;
                     });
                 } else {
-                    dailyModulesContainer.innerHTML += `<p>Nessun dato trovato.</p>`;
+                    content = '<p>Nessun dato trovato.</p>';
                 }
+                dailyModulesContainer.innerHTML += `
+                    <div class="card">
+                        <div class="card-header" id="heading${i}">
+                            <h2 class="mb-0">
+                                <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapse${i}" aria-expanded="true" aria-controls="collapse${i}">
+                                    Giorno ${i}
+                                </button>
+                            </h2>
+                        </div>
+                        <div id="collapse${i}" class="collapse" aria-labelledby="heading${i}" data-parent="#dailyModulesAccordion">
+                            <div class="card-body">
+                                ${content}
+                            </div>
+                        </div>
+                    </div>
+                `;
             }
         } else {
-            for (let i = 1; i <= 8; i++) {
-                dailyModulesContainer.innerHTML += `<h3>Giorno ${i}</h3><p>Nessun dato trovato.</p>`;
-            }
+            dailyModulesContainer.innerHTML = `<p>Nessun dato trovato.</p>`;
         }
     }).catch(error => {
         console.error('Errore durante il recupero dei moduli giornalieri:', error);
     });
 }
 
-// Funzione per richiedere la password
+// Funzione per aprire il modal di Zantiamo
+function openZantiamoModal() {
+    $('#zantiamoModal').modal('show');
+}
+
+// Funzione per copiare i risultati giornalieri in uno dei moduli selezionati
+function copyDailyResults() {
+    const dayIndex = document.getElementById('moduleSelect').value;
+    const dailyResultsRef = database.ref('dailyResults');
+    const dailyModulesRef = database.ref(`dailyModules/day${dayIndex}`);
+
+    dailyResultsRef.once('value')
+        .then(snapshot => {
+            const dailyData = snapshot.val();
+            if (dailyData) {
+                dailyModulesRef.set(dailyData)
+                    .then(() => {
+                        alert(`Risultati copiati nel modulo Giorno ${dayIndex}`);
+                        fetchDailyModules();
+                        $('#zantiamoModal').modal('hide');
+                    })
+                    .catch(error => {
+                        console.error('Errore durante la copia dei risultati giornalieri:', error);
+                    });
+            } else {
+                alert('Nessun dato giornaliero da copiare.');
+            }
+        }).catch(error => {
+            console.error('Errore durante il recupero dei dati giornalieri:', error);
+        });
+}
+
+// Funzione per aprire il modal di inserimento password
 function promptPassword(target) {
     resetTarget = target;
     $('#passwordModal').modal('show');
@@ -112,12 +158,12 @@ function promptPassword(target) {
 function verifyPassword() {
     const password = document.getElementById('adminPassword').value;
     if (password === 'Admin') {
-        $('#passwordModal').modal('hide');
         if (resetTarget === 'daily') {
             resetDailyResults();
         } else if (resetTarget === 'total') {
             resetTotalResults();
         }
+        $('#passwordModal').modal('hide');
     } else {
         alert('Password errata!');
     }
@@ -146,50 +192,6 @@ function resetTotalResults() {
         })
         .catch(error => {
             console.error('Errore durante il reset della classifica generale:', error);
-        });
-}
-
-// Funzione per copiare i risultati giornalieri in uno dei moduli
-function copyDailyResults() {
-    const dailyResultsRef = database.ref('dailyResults');
-    const dailyModulesRef = database.ref('dailyModules');
-
-    dailyModulesRef.once('value')
-        .then(snapshot => {
-            const data = snapshot.val();
-            let dayIndex = 1;
-
-            // Trova il primo modulo vuoto
-            while (dayIndex <= 8 && data && data[`day${dayIndex}`]) {
-                dayIndex++;
-            }
-
-            if (dayIndex > 8) {
-                alert('Tutti i moduli sono pieni.');
-                return;
-            }
-
-            // Copia i risultati giornalieri nel modulo trovato
-            dailyResultsRef.once('value', snapshot => {
-                const dailyData = snapshot.val();
-                if (dailyData) {
-                    dailyModulesRef.child(`day${dayIndex}`).set(dailyData)
-                        .then(() => {
-                            alert(`Risultati copiati nel modulo Giorno ${dayIndex}`);
-                            fetchDailyModules();
-                        })
-                        .catch(error => {
-                            console.error('Errore durante la copia dei risultati giornalieri:', error);
-                        });
-                } else {
-                    alert('Nessun dato giornaliero da copiare.');
-                }
-            }).catch(error => {
-                console.error('Errore durante il recupero dei dati giornalieri:', error);
-            });
-        })
-        .catch(error => {
-            console.error('Errore durante il recupero dei moduli giornalieri:', error);
         });
 }
 
