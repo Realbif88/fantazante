@@ -16,21 +16,38 @@ const database = firebase.database();
 // Funzione per recuperare e visualizzare i risultati
 function fetchResults() {
     const nickname = document.getElementById('nicknameInput').value;
-    const resultsRef = database.ref('dailyResults/' + nickname);
 
-    resultsRef.once('value', snapshot => {
+    fetchDailyResults(nickname);
+    fetchTotalResults(nickname);
+}
+
+// Funzione per recuperare e visualizzare i risultati giornalieri
+function fetchDailyResults(nickname) {
+    const dailyResultsRef = database.ref('dailyResults/' + nickname);
+
+    dailyResultsRef.once('value', snapshot => {
         const data = snapshot.val();
-        const resultsContainer = document.getElementById('resultsContainer');
+        const dailyResultsContainer = document.getElementById('dailyResultsContainer');
 
         if (data !== null) {
-            resultsContainer.innerHTML = `
-                <h3>Classifica per ${nickname}</h3>
+            dailyResultsContainer.innerHTML = `
+                <h3>Classifica Giornaliera per ${nickname}</h3>
                 <p>Punteggio Totale: ${data}</p>
             `;
         } else {
-            resultsContainer.innerHTML = `<p>Nessun dato trovato per il nickname "${nickname}".</p>`;
+            dailyResultsContainer.innerHTML = `<p>Nessun dato trovato per il nickname "${nickname}".</p>`;
         }
     }).catch(error => {
-        console.error('Errore durante il recupero dei dati:', error);
+        console.error('Errore durante il recupero dei dati giornalieri:', error);
     });
 }
+
+// Funzione per recuperare e visualizzare i risultati generali
+function fetchTotalResults(nickname) {
+    const totalResultsRef = database.ref('totalResults/' + nickname);
+
+    totalResultsRef.once('value', snapshot => {
+        const data = snapshot.val();
+        const totalResultsContainer = document.getElementById('totalResultsContainer');
+
+        if (data !
