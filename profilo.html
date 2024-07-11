@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profilo</title>
+    <!-- Includere Bootstrap -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        .container {
+            margin-top: 50px;
+        }
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Profilo</h1>
+        <div class="form-group">
+            <label for="profileNickname">Seleziona il tuo nickname</label>
+            <input type="text" id="profileNickname" class="form-control" placeholder="Inserisci il tuo nickname">
+            <button class="btn btn-primary mt-2" onclick="fetchProfileData()">Visualizza Profilo</button>
+        </div>
+        <div id="profileData">
+            <h2>Dettagli Profilo</h2>
+            <div id="profileResultsContainer"></div>
+        </div>
+        <button class="btn btn-secondary mt-3" onclick="window.location.href='index.html'">Torna alla schermata principale</button>
+    </div>
+
+    <!-- Includere gli script di Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+    <!-- Includere il tuo script -->
+    <script src="profilo.js"></script>
+</body>
+</html>
