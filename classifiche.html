@@ -22,16 +22,17 @@
     <div class="container">
         <h1>Classifiche</h1>
         <button class="btn btn-primary" onclick="window.location.href='index.html'">Torna alla schermata principale</button>
+        <button class="btn btn-secondary" onclick="promptAdminPassword()">Accesso Admin</button>
         <div>
             <h2>Classifica Giornaliera</h2>
             <div id="dailyResultsContainer"></div>
-            <button class="btn btn-danger" onclick="promptPassword('daily')">Reset Classifica Giornaliera</button>
-            <button class="btn btn-warning" onclick="openZantiamoModal()">Zantiamo</button>
+            <button id="resetDailyBtn" class="btn btn-danger hidden" onclick="promptPassword('daily')">Reset Classifica Giornaliera</button>
+            <button id="zantiamoBtn" class="btn btn-warning hidden" onclick="openZantiamoModal()">Zantiamo</button>
         </div>
         <div>
             <h2>Classifica Generale</h2>
             <div id="totalResultsContainer"></div>
-            <button class="btn btn-danger" onclick="promptPassword('total')">Reset Classifica Generale</button>
+            <button id="resetTotalBtn" class="btn btn-danger hidden" onclick="promptPassword('total')">Reset Classifica Generale</button>
         </div>
         <div>
             <h2>Classifiche per Giorno</h2>
@@ -85,6 +86,27 @@
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Annulla</button>
                     <button type="button" class="btn btn-primary" onclick="copyDailyResults()">Copia</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal per inserire la password admin -->
+    <div class="modal fade" id="adminPasswordModal" tabindex="-1" aria-labelledby="adminPasswordModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="adminPasswordModalLabel">Accesso Admin</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <input type="password" id="adminAccessPassword" class="form-control" placeholder="Password">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Annulla</button>
+                    <button type="button" class="btn btn-primary" onclick="verifyAdminAccess()">Verifica</button>
                 </div>
             </div>
         </div>
