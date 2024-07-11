@@ -23,9 +23,18 @@
                 <label for="nicknameInput">Inserisci il Nickname:</label>
                 <input type="text" class="form-control" id="nicknameInput" required>
             </div>
-            <button type="button" class="btn btn-primary" onclick="fetchResults()">Visualizza Classifica</button>
+            <button type="button" class="btn btn-primary" onclick="fetchResults()">Visualizza Classifiche</button>
         </form>
-        <div id="resultsContainer"></div>
+        <div id="resultsContainer">
+            <div>
+                <h2>Classifica Giornaliera</h2>
+                <div id="dailyResultsContainer"></div>
+            </div>
+            <div>
+                <h2>Classifica Generale</h2>
+                <div id="totalResultsContainer"></div>
+            </div>
+        </div>
     </div>
 
     <!-- Includere gli script di Firebase -->
