@@ -49,4 +49,72 @@ function fetchDailyResults() {
 function fetchTotalResults() {
     const totalResultsRef = database.ref('totalResults');
 
-    
+    totalResultsRef.once('value', snapshot => {
+        const data = snapshot.val();
+        const totalResultsContainer = document.getElementById('totalResultsContainer');
+        totalResultsContainer.innerHTML = ''; // Pulisce il contenitore
+
+        if (data !== null) {
+            const sortedResults = Object.entries(data).sort((a, b) => b[1] - a[1]);
+            sortedResults.forEach(([nickname, score]) => {
+                totalResultsContainer.innerHTML += `
+                    <p>${nickname}: ${score} punti</p>
+                `;
+            });
+        } else {
+            totalResultsContainer.innerHTML = `<p>Nessun dato trovato.</p>`;
+        }
+    }).catch(error => {
+        console.error('Errore durante il recupero dei dati generali:', error);
+    });
+}
+
+// Funzione per richiedere la password
+function promptPassword(target) {
+    resetTarget = target;
+    $('#passwordModal').modal('show');
+}
+
+// Funzione per verificare la password
+function verifyPassword() {
+    const password = document.getElementById('adminPassword').value;
+    if (password === 'Admin') {
+        $('#passwordModal').modal('hide');
+        if (resetTarget === 'daily') {
+            resetDailyResults();
+        } else if (resetTarget === 'total') {
+            resetTotalResults();
+        }
+    } else {
+        alert('Password errata!');
+    }
+}
+
+// Funzione per resettare la classifica giornaliera
+function resetDailyResults() {
+    const dailyResultsRef = database.ref('dailyResults');
+    dailyResultsRef.remove()
+        .then(() => {
+            alert('Classifica giornaliera resettata!');
+            fetchDailyResults();
+        })
+        .catch(error => {
+            console.error('Errore durante il reset della classifica giornaliera:', error);
+        });
+}
+
+// Funzione per resettare la classifica generale
+function resetTotalResults() {
+    const totalResultsRef = database.ref('totalResults');
+    totalResultsRef.remove()
+        .then(() => {
+            alert('Classifica generale resettata!');
+            fetchTotalResults();
+        })
+        .catch(error => {
+            console.error('Errore durante il reset della classifica generale:', error);
+        });
+}
+
+// Recupera i risultati quando la pagina viene caricata
+window.onload = fetchResults;
