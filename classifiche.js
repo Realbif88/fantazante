@@ -102,6 +102,7 @@ function fetchDailyModules() {
                         <div id="collapse${i}" class="collapse" aria-labelledby="heading${i}" data-parent="#dailyModulesAccordion">
                             <div class="card-body">
                                 ${content}
+                                <button id="resetDay${i}Btn" class="btn btn-danger hidden" onclick="promptPassword('day${i}')">Reset Giorno ${i}</button>
                             </div>
                         </div>
                     </div>
@@ -161,6 +162,8 @@ function verifyPassword() {
             resetDailyResults();
         } else if (resetTarget === 'total') {
             resetTotalResults();
+        } else if (resetTarget.startsWith('day')) {
+            resetDailyModule(resetTarget);
         }
         $('#passwordModal').modal('hide');
     } else {
@@ -181,6 +184,9 @@ function verifyAdminAccess() {
         document.getElementById('resetDailyBtn').classList.remove('hidden');
         document.getElementById('resetTotalBtn').classList.remove('hidden');
         document.getElementById('zantiamoBtn').classList.remove('hidden');
+        for (let i = 1; i <= 8; i++) {
+            document.getElementById(`resetDay${i}Btn`).classList.remove('hidden');
+        }
     } else {
         alert('Password errata!');
     }
@@ -209,6 +215,19 @@ function resetTotalResults() {
         })
         .catch(error => {
             console.error('Errore durante il reset della classifica generale:', error);
+        });
+}
+
+// Funzione per resettare i risultati di un giorno specifico
+function resetDailyModule(day) {
+    const dailyModuleRef = database.ref(`dailyModules/${day}`);
+    dailyModuleRef.remove()
+        .then(() => {
+            alert(`Modulo ${day} resettato!`);
+            fetchDailyModules();
+        })
+        .catch(error => {
+            console.error(`Errore durante il reset del modulo ${day}:`, error);
         });
 }
 
