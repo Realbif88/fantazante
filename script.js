@@ -44,36 +44,36 @@ async function submitForm() {
     }
 }
 
-// Funzione per resettare i punteggi giornalieri
-function resetDailyScores() {
-    const password = prompt("Inserisci la password per resettare la classifica giornaliera:");
-    if (password === "Zante") {
-        database.ref('dailyResults').remove()
-            .then(() => {
-                updateResults();
-                alert("Classifica giornaliera resettata.");
-            }).catch(error => {
-                console.error("Error resetting daily scores:", error);
-            });
+// Funzione per controllare la password e mostrare i pulsanti di reset
+function checkPassword() {
+    const password = document.getElementById('resetPassword').value;
+    if (password === "Zante" || password === "fantazanteok") {
+        document.getElementById('resetButtons').style.display = 'block';
     } else {
         alert("Password errata.");
     }
 }
 
+// Funzione per resettare i punteggi giornalieri
+function resetDailyScores() {
+    database.ref('dailyResults').remove()
+        .then(() => {
+            updateResults();
+            alert("Classifica giornaliera resettata.");
+        }).catch(error => {
+            console.error("Error resetting daily scores:", error);
+        });
+}
+
 // Funzione per resettare i punteggi totali
 function resetTotalScores() {
-    const password = prompt("Inserisci la password per resettare la classifica totale:");
-    if (password === "fantazanteok") {
-        database.ref('totalResults').remove()
-            .then(() => {
-                updateResults();
-                alert("Classifica totale resettata con successo.");
-            }).catch(error => {
-                console.error("Error resetting total scores:", error);
-            });
-    } else {
-        alert("Password errata.");
-    }
+    database.ref('totalResults').remove()
+        .then(() => {
+            updateResults();
+            alert("Classifica totale resettata con successo.");
+        }).catch(error => {
+            console.error("Error resetting total scores:", error);
+        });
 }
 
 // Funzione per aggiornare i risultati
