@@ -13,37 +13,38 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const database = firebase.database();
 
-// Funzione per inviare i dati al database
-function sendResults() {
+// Funzione per inviare i punteggi
+function submitScores() {
     const nickname = document.getElementById('nickname').value;
-    const checkboxes = document.querySelectorAll('input[type="checkbox"]');
-    const dailyResultsRef = database.ref('dailyResults/' + nickname);
-    const totalResultsRef = database.ref('totalResults/' + nickname);
+    const scores = document.getElementById('scores').value.split(',').map(Number);
 
-    let totalScore = 0;
-    checkboxes.forEach(checkbox => {
-        if (checkbox.checked) {
-            totalScore += parseInt(checkbox.value);
-        }
-    });
+    if (nickname && scores.length > 0) {
+        const dailyResultsRef = database.ref('dailyResults');
+        const totalResultsRef = database.ref('totalResults');
+        const userRef = database.ref(`userProfiles/${nickname}`);
+        
+        let totalScore = 0;
+        const updates = {};
 
-    // Salva il punteggio totale per il nickname nella classifica giornaliera
-    dailyResultsRef.set(totalScore)
-        .then(() => {
-            alert('Dati giornalieri inviati con successo!');
-        })
-        .catch(error => {
-            console.error('Errore durante l\'invio dei dati giornalieri:', error);
+        scores.forEach((score, index) => {
+            const dayKey = `day${index + 1}`;
+            totalScore += score;
+            updates[dayKey] = score;
         });
 
-    // Aggiorna il punteggio totale per il nickname nella classifica generale
-    totalResultsRef.transaction(currentTotal => {
-        return (currentTotal || 0) + totalScore;
-    })
-    .then(() => {
-        console.log('Classifica generale aggiornata con successo!');
-    })
-    .catch(error => {
-        console.error('Errore durante l\'aggiornamento della classifica generale:', error);
-    });
+        // Aggiorna i punteggi giornalieri
+        dailyResultsRef.child(nickname).set(totalScore);
+        // Aggiorna i punteggi totali
+        totalResultsRef.child(nickname).set(totalScore);
+        // Aggiorna il profilo utente
+        userRef.set(updates)
+            .then(() => {
+                alert('Dati inviati con successo!');
+            })
+            .catch(error => {
+                console.error('Errore durante l\'invio dei dati:', error);
+            });
+    } else {
+        alert('Per favore inserisci un nickname e i punteggi.');
+    }
 }
