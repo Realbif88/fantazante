@@ -13,29 +13,30 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const database = firebase.database();
 
-// Funzione per recuperare e visualizzare i risultati
+// Funzione per recuperare e visualizzare le classifiche
 function fetchResults() {
-    const nickname = document.getElementById('nicknameInput').value;
-
-    fetchDailyResults(nickname);
-    fetchTotalResults(nickname);
+    fetchDailyResults();
+    fetchTotalResults();
 }
 
 // Funzione per recuperare e visualizzare i risultati giornalieri
-function fetchDailyResults(nickname) {
-    const dailyResultsRef = database.ref('dailyResults/' + nickname);
+function fetchDailyResults() {
+    const dailyResultsRef = database.ref('dailyResults');
 
     dailyResultsRef.once('value', snapshot => {
         const data = snapshot.val();
         const dailyResultsContainer = document.getElementById('dailyResultsContainer');
+        dailyResultsContainer.innerHTML = ''; // Pulisce il contenitore
 
         if (data !== null) {
-            dailyResultsContainer.innerHTML = `
-                <h3>Classifica Giornaliera per ${nickname}</h3>
-                <p>Punteggio Totale: ${data}</p>
-            `;
+            const sortedResults = Object.entries(data).sort((a, b) => b[1] - a[1]);
+            sortedResults.forEach(([nickname, score]) => {
+                dailyResultsContainer.innerHTML += `
+                    <p>${nickname}: ${score} punti</p>
+                `;
+            });
         } else {
-            dailyResultsContainer.innerHTML = `<p>Nessun dato trovato per il nickname "${nickname}".</p>`;
+            dailyResultsContainer.innerHTML = `<p>Nessun dato trovato.</p>`;
         }
     }).catch(error => {
         console.error('Errore durante il recupero dei dati giornalieri:', error);
@@ -43,22 +44,28 @@ function fetchDailyResults(nickname) {
 }
 
 // Funzione per recuperare e visualizzare i risultati generali
-function fetchTotalResults(nickname) {
-    const totalResultsRef = database.ref('totalResults/' + nickname);
+function fetchTotalResults() {
+    const totalResultsRef = database.ref('totalResults');
 
     totalResultsRef.once('value', snapshot => {
         const data = snapshot.val();
         const totalResultsContainer = document.getElementById('totalResultsContainer');
+        totalResultsContainer.innerHTML = ''; // Pulisce il contenitore
 
         if (data !== null) {
-            totalResultsContainer.innerHTML = `
-                <h3>Classifica Generale per ${nickname}</h3>
-                <p>Punteggio Totale: ${data}</p>
-            `;
+            const sortedResults = Object.entries(data).sort((a, b) => b[1] - a[1]);
+            sortedResults.forEach(([nickname, score]) => {
+                totalResultsContainer.innerHTML += `
+                    <p>${nickname}: ${score} punti</p>
+                `;
+            });
         } else {
-            totalResultsContainer.innerHTML = `<p>Nessun dato trovato per il nickname "${nickname}".</p>`;
+            totalResultsContainer.innerHTML = `<p>Nessun dato trovato.</p>`;
         }
     }).catch(error => {
         console.error('Errore durante il recupero dei dati generali:', error);
     });
 }
+
+// Recupera i risultati quando la pagina viene caricata
+window.onload = fetchResults;
