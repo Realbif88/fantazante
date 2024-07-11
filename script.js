@@ -12,57 +12,6 @@ const firebaseConfig = {
 // Inizializza Firebase
 firebase.initializeApp(firebaseConfig);
 const database = firebase.database();
-const auth = firebase.auth();
-
-// Funzione per registrare un nuovo utente
-function registerUser(event) {
-    event.preventDefault();
-    const email = document.getElementById('email').value;
-    const password = document.getElementById('password').value;
-
-    auth.createUserWithEmailAndPassword(email, password)
-        .then((userCredential) => {
-            alert("Registrazione completata! Effettua il login.");
-            window.location.href = 'index.html';
-        })
-        .catch((error) => {
-            console.error("Error registering user:", error);
-            alert("Errore nella registrazione: " + error.message);
-        });
-}
-
-// Funzione per autenticare un utente
-function loginUser(event) {
-    event.preventDefault();
-    const email = document.getElementById('email').value;
-    const password = document.getElementById('password').value;
-
-    auth.signInWithEmailAndPassword(email, password)
-        .then((userCredential) => {
-            window.location.href = 'classifica.html';
-        })
-        .catch((error) => {
-            console.error("Error logging in user:", error);
-            alert("Errore nel login: " + error.message);
-        });
-}
-
-// Funzione per effettuare il logout
-function logoutUser() {
-    auth.signOut().then(() => {
-        window.location.href = 'index.html';
-    }).catch((error) => {
-        console.error("Error logging out user:", error);
-        alert("Errore nel logout: " + error.message);
-    });
-}
-
-// Protegge la pagina delle classifiche, consentendo l'accesso solo agli utenti autenticati
-auth.onAuthStateChanged((user) => {
-    if (!user && window.location.pathname === '/classifica.html') {
-        window.location.href = 'index.html';
-    }
-});
 
 // Funzione per inviare i dati al database
 async function submitForm() {
@@ -107,4 +56,58 @@ function resetDailyScores() {
 }
 
 // Funzione per resettare i punteggi totali
-function reset
+function resetTotalScores() {
+    const password = prompt("Inserisci la password per resettare la classifica totale:");
+    if (password === "fantazanteok") {
+        database.ref('totalResults').remove()
+            .then(() => {
+                updateResults();
+                alert("Classifica totale resettata con successo.");
+            }).catch(error => {
+                console.error("Error resetting total scores:", error);
+            });
+    } else {
+        alert("Password errata.");
+    }
+}
+
+// Funzione per aggiornare i risultati
+function updateResults() {
+    // Recupera i risultati giornalieri
+    database.ref('dailyResults').once('value').then(snapshot => {
+        const dailyResults = [];
+        snapshot.forEach(childSnapshot => {
+            dailyResults.push({ nickname: childSnapshot.key, score: childSnapshot.val() });
+        });
+
+        const dailyResultDiv = document.getElementById('dailyResult');
+        dailyResultDiv.innerHTML = '<h2>Classifica Giornaliera</h2>';
+        dailyResults.sort((a, b) => b.score - a.score);
+        dailyResults.forEach((result, index) => {
+            dailyResultDiv.innerHTML += `<p>${index + 1}. ${result.nickname} - ${result.score} punti</p>`;
+        });
+    }).catch(error => {
+        console.error("Error retrieving daily scores:", error);
+    });
+
+    // Recupera i risultati totali
+    database.ref('totalResults').once('value').then(snapshot => {
+        const sortedTotalResults = [];
+        snapshot.forEach(childSnapshot => {
+            sortedTotalResults.push({ nickname: childSnapshot.key, score: childSnapshot.val() });
+        });
+
+        sortedTotalResults.sort((a, b) => b.score - a.score);
+
+        const totalResultDiv = document.getElementById('totalResult');
+        totalResultDiv.innerHTML = '<h2>Classifica Totale</h2>';
+        sortedTotalResults.forEach((result, index) => {
+            totalResultDiv.innerHTML += `<p>${index + 1}. ${result.nickname} - ${result.score} punti</p>`;
+        });
+    }).catch(error => {
+        console.error("Error retrieving total scores:", error);
+    });
+}
+
+// Aggiorna le classifiche al caricamento della pagina
+document.addEventListener('DOMContentLoaded', updateResults);
