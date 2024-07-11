@@ -27,9 +27,11 @@ function sendResults() {
     });
 
     // Salva il punteggio totale per il nickname
-    dailyResultsRef.set(totalScore).then(() => {
-        alert('Dati inviati con successo!');
-    }).catch(error => {
-        console.error('Errore durante l\'invio dei dati:', error);
-    });
+    dailyResultsRef.set(totalScore)
+        .then(() => {
+            alert('Dati inviati con successo!');
+        })
+        .catch(error => {
+            console.error('Errore durante l\'invio dei dati:', error);
+        });
 }
