@@ -23,14 +23,17 @@
                 <label for="nickname">Nickname</label>
                 <input type="text" id="nickname" class="form-control" required>
             </div>
-            <div class="form-group">
-                <label for="scores">Punteggi (separati da virgola)</label>
-                <input type="text" id="scores" class="form-control" required>
+
+            <!-- Sezione con le caselle di controllo e punteggi -->
+            <h4>Punteggi</h4>
+            <div id="checkboxContainer">
+                <!-- JavaScript inietterà qui le caselle di controllo -->
             </div>
-            <button type="button" class="btn btn-primary" onclick="submitScores()">Invia</button>
+
+            <button type="button" class="btn btn-primary mt-3" onclick="submitScores()">Invia</button>
         </form>
-        <button class="btn btn-secondary" onclick="window.location.href='classifiche.html'">Visualizza Classifiche</button>
-        <button class="btn btn-info" onclick="window.location.href='profilo.html'">Profilo</button>
+        <button class="btn btn-secondary mt-3" onclick="window.location.href='classifiche.html'">Visualizza Classifiche</button>
+        <button class="btn btn-info mt-3" onclick="window.location.href='profilo.html'">Profilo</button>
     </div>
 
     <!-- Includere gli script di Firebase -->
