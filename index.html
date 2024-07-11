@@ -4,38 +4,79 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Classifica</title>
+    <!-- Includere Bootstrap -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        .container {
+            margin-top: 50px;
+        }
+        h1, h2 {
+            text-align: center;
+        }
+        .form-section {
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .result-section {
+            margin-top: 30px;
+        }
+    </style>
 </head>
 <body>
-    <h1>Benvenuto nella Classifica</h1>
+    <div class="container">
+        <h1>Benvenuto nella Classifica</h1>
+        <div class="form-section">
+            <form onsubmit="submitForm(); return false;">
+                <div class="form-group">
+                    <label for="nickname">Nickname:</label>
+                    <input type="text" class="form-control" id="nickname" name="nickname" required>
+                </div>
+                <div class="form-group">
+                    <label>Seleziona le caselle:</label><br>
+                    <!-- Aggiungi qui le tue 20 caselle di selezione -->
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="box" value="1" id="box1">
+                        <label class="form-check-label" for="box1"> Casella 1 (1 punto)</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="box" value="2" id="box2">
+                        <label class="form-check-label" for="box2"> Casella 2 (2 punti)</label>
+                    </div>
+                    <!-- Ripeti per tutte le caselle -->
+                </div>
+                <button type="submit" class="btn btn-primary">Invia</button>
+            </form>
+        </div>
+        
+        <div class="form-section result-section">
+            <button class="btn btn-danger" onclick="resetDailyScores()">Reset Classifica Giornaliera</button>
+            <button class="btn btn-danger" onclick="resetTotalScores()">Reset Classifica Totale</button>
+        </div>
 
-    <form onsubmit="submitForm(); return false;">
-        <label for="nickname">Nickname:</label>
-        <input type="text" id="nickname" name="nickname" required>
-        <br>
-        <label>Seleziona le caselle:</label>
-        <br>
-        <!-- Aggiungi qui le tue 20 caselle di selezione -->
-        <input type="checkbox" name="box" value="1"> Casella 1 (1 punto)<br>
-        <input type="checkbox" name="box" value="2"> Casella 2 (2 punti)<br>
-        <!-- Ripeti per tutte le caselle -->
-        <button type="submit">Invia</button>
-    </form>
+        <div class="result-section">
+            <div id="dailyResult">
+                <h2>Classifica Giornaliera</h2>
+            </div>
 
-    <button onclick="resetDailyScores()">Reset Classifica Giornaliera</button>
-    <button onclick="resetTotalScores()">Reset Classifica Totale</button>
-
-    <div id="dailyResult">
-        <h2>Classifica Giornaliera</h2>
+            <div id="totalResult">
+                <h2>Classifica Totale</h2>
+            </div>
+        </div>
     </div>
 
-    <div id="totalResult">
-        <h2>Classifica Totale</h2>
-    </div>
-
-    <!-- Includi gli script di Firebase -->
+    <!-- Includere gli script di Firebase -->
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
-    <!-- Includi il tuo script -->
+    <!-- Includere gli script di Bootstrap -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <!-- Includere il tuo script -->
     <script src="script.js"></script>
 </body>
 </html>
