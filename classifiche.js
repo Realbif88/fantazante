@@ -43,11 +43,12 @@ function loadNicknameClassifica() {
     
     classificaSezioni.innerHTML = '';
 
-    // Aggiungi 8 sezioni per la classifica
+    // Aggiungi 8 moduli per la classifica
     for (let i = 1; i <= 8; i++) {
         const section = document.createElement('div');
         section.classList.add('result-section');
-        section.innerHTML = `<h2>Classifica Sezione ${i}</h2>`;
+        section.id = `section${i}`;
+        section.innerHTML = `<h2>Classifica Sezione ${i}</h2><ul id="list${i}"></ul>`;
         classificaSezioni.appendChild(section);
     }
 
@@ -67,7 +68,10 @@ function loadNicknameClassifica() {
         results.forEach((result, index) => {
             const sectionIndex = index % 8;
             const section = sections[sectionIndex];
-            section.innerHTML += `<p>${result.nickname} - ${result.score} punti</p>`;
+            const list = section.querySelector(`#list${sectionIndex + 1}`);
+            const listItem = document.createElement('li');
+            listItem.textContent = `${result.nickname} - ${result.score} punti`;
+            list.appendChild(listItem);
         });
     }).catch(error => {
         console.error("Error retrieving daily scores:", error);
