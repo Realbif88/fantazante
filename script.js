@@ -46,13 +46,18 @@ async function submitForm() {
 
 // Funzione per resettare i punteggi giornalieri
 function resetDailyScores() {
-    database.ref('dailyResults').remove()
-        .then(() => {
-            updateResults();
-            alert("Classifica giornaliera resettata.");
-        }).catch(error => {
-            console.error("Error resetting daily scores:", error);
-        });
+    const password = prompt("Inserisci la password per resettare la classifica giornaliera:");
+    if (password === "Zante") {
+        database.ref('dailyResults').remove()
+            .then(() => {
+                updateResults();
+                alert("Classifica giornaliera resettata.");
+            }).catch(error => {
+                console.error("Error resetting daily scores:", error);
+            });
+    } else {
+        alert("Password errata.");
+    }
 }
 
 // Funzione per resettare i punteggi totali
