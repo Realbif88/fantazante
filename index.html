@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Invio Classifica Giornaliera</title>
+    <title>Index</title>
     <!-- Includere Bootstrap -->
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <style>
@@ -17,37 +17,25 @@
 </head>
 <body>
     <div class="container">
-        <h1>Invio Classifica Giornaliera</h1>
-        <form id="classificaForm">
+        <h1>Benvenuto!</h1>
+        <form id="scoreForm">
             <div class="form-group">
-                <label for="nickname">Nickname:</label>
-                <input type="text" class="form-control" id="nickname" required>
+                <label for="nickname">Nickname</label>
+                <input type="text" id="nickname" class="form-control" required>
             </div>
             <div class="form-group">
-                <label>Seleziona le Caselle:</label>
-                <div>
-                    <input type="checkbox" id="casella1" value="10">
-                    <label for="casella1">Casella 1 - 10 punti</label>
-                </div>
-                <div>
-                    <input type="checkbox" id="casella2" value="20">
-                    <label for="casella2">Casella 2 - 20 punti</label>
-                </div>
-                <!-- Aggiungi altre caselle se necessario -->
+                <label for="scores">Punteggi (separati da virgola)</label>
+                <input type="text" id="scores" class="form-control" required>
             </div>
-            <button type="button" class="btn btn-primary" onclick="sendResults()">Invia</button>
-            <!-- Pulsante per visualizzare le classifiche -->
-            <a href="classifiche.html" class="btn btn-secondary">Visualizza Classifiche</a>
+            <button type="button" class="btn btn-primary" onclick="submitScores()">Invia</button>
         </form>
+        <button class="btn btn-secondary" onclick="window.location.href='classifiche.html'">Visualizza Classifiche</button>
+        <button class="btn btn-info" onclick="window.location.href='profilo.html'">Profilo</button>
     </div>
 
     <!-- Includere gli script di Firebase -->
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
-    <!-- Includere gli script di Bootstrap -->
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <!-- Includere il tuo script -->
     <script src="index.js"></script>
 </body>
