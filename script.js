@@ -47,7 +47,7 @@ async function submitForm() {
 // Funzione per controllare la password e mostrare i pulsanti di reset
 function checkPassword() {
     const password = document.getElementById('resetPassword').value;
-    if (password === "Zante" || password === "fantazanteok") {
+    if (password === "Admin") {
         document.getElementById('resetButtons').style.display = 'block';
     } else {
         alert("Password errata.");
