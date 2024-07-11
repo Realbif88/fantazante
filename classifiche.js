@@ -73,18 +73,17 @@ function fetchTotalResults() {
 // Funzione per recuperare e visualizzare i moduli giornalieri
 function fetchDailyModules() {
     const dailyModulesRef = database.ref('dailyModules');
+    const dailyModulesContainer = document.getElementById('dailyModulesAccordion');
 
     dailyModulesRef.once('value', snapshot => {
         const data = snapshot.val();
-        const dailyModulesContainer = document.getElementById('dailyModulesAccordion');
         dailyModulesContainer.innerHTML = ''; // Pulisce il contenitore
 
         if (data !== null) {
             for (let i = 1; i <= 8; i++) {
-                const dayData = data[`day${i}`];
                 let content = '';
-                if (dayData) {
-                    const sortedResults = Object.entries(dayData).sort((a, b) => b[1] - a[1]);
+                if (data[`day${i}`]) {
+                    const sortedResults = Object.entries(data[`day${i}`]).sort((a, b) => b[1] - a[1]);
                     sortedResults.forEach(([nickname, score]) => {
                         content += `<p>${nickname}: ${score} punti</p>`;
                     });
@@ -148,13 +147,13 @@ function copyDailyResults() {
         });
 }
 
-// Funzione per aprire il modal di inserimento password
+// Funzione per aprire il modal di inserimento password per il reset
 function promptPassword(target) {
     resetTarget = target;
     $('#passwordModal').modal('show');
 }
 
-// Funzione per verificare la password
+// Funzione per verificare la password per il reset
 function verifyPassword() {
     const password = document.getElementById('adminPassword').value;
     if (password === 'Admin') {
@@ -164,6 +163,24 @@ function verifyPassword() {
             resetTotalResults();
         }
         $('#passwordModal').modal('hide');
+    } else {
+        alert('Password errata!');
+    }
+}
+
+// Funzione per aprire il modal di inserimento password per accesso admin
+function promptAdminPassword() {
+    $('#adminPasswordModal').modal('show');
+}
+
+// Funzione per verificare la password per accesso admin
+function verifyAdminAccess() {
+    const password = document.getElementById('adminAccessPassword').value;
+    if (password === 'Admin') {
+        $('#adminPasswordModal').modal('hide');
+        document.getElementById('resetDailyBtn').classList.remove('hidden');
+        document.getElementById('resetTotalBtn').classList.remove('hidden');
+        document.getElementById('zantiamoBtn').classList.remove('hidden');
     } else {
         alert('Password errata!');
     }
