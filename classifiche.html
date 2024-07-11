@@ -26,7 +26,7 @@
             <h2>Classifica Giornaliera</h2>
             <div id="dailyResultsContainer"></div>
             <button class="btn btn-danger" onclick="promptPassword('daily')">Reset Classifica Giornaliera</button>
-            <button class="btn btn-warning" onclick="copyDailyResults()">Zantiamo</button>
+            <button class="btn btn-warning" onclick="openZantiamoModal()">Zantiamo</button>
         </div>
         <div>
             <h2>Classifica Generale</h2>
@@ -35,7 +35,7 @@
         </div>
         <div>
             <h2>Classifiche per Giorno</h2>
-            <div id="dailyModulesContainer"></div>
+            <div class="accordion" id="dailyModulesAccordion"></div>
         </div>
     </div>
 
@@ -55,6 +55,36 @@
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Annulla</button>
                     <button type="button" class="btn btn-primary" onclick="verifyPassword()">Verifica</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal per selezionare il modulo -->
+    <div class="modal fade" id="zantiamoModal" tabindex="-1" aria-labelledby="zantiamoModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="zantiamoModalLabel">Seleziona il Modulo</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <select id="moduleSelect" class="form-control">
+                        <option value="1">Giorno 1</option>
+                        <option value="2">Giorno 2</option>
+                        <option value="3">Giorno 3</option>
+                        <option value="4">Giorno 4</option>
+                        <option value="5">Giorno 5</option>
+                        <option value="6">Giorno 6</option>
+                        <option value="7">Giorno 7</option>
+                        <option value="8">Giorno 8</option>
+                    </select>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Annulla</button>
+                    <button type="button" class="btn btn-primary" onclick="copyDailyResults()">Copia</button>
                 </div>
             </div>
         </div>
