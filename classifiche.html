@@ -18,22 +18,13 @@
 <body>
     <div class="container">
         <h1>Classifiche</h1>
-        <form id="nicknameForm">
-            <div class="form-group">
-                <label for="nicknameInput">Inserisci il Nickname:</label>
-                <input type="text" class="form-control" id="nicknameInput" required>
-            </div>
-            <button type="button" class="btn btn-primary" onclick="fetchResults()">Visualizza Classifiche</button>
-        </form>
-        <div id="resultsContainer">
-            <div>
-                <h2>Classifica Giornaliera</h2>
-                <div id="dailyResultsContainer"></div>
-            </div>
-            <div>
-                <h2>Classifica Generale</h2>
-                <div id="totalResultsContainer"></div>
-            </div>
+        <div>
+            <h2>Classifica Giornaliera</h2>
+            <div id="dailyResultsContainer"></div>
+        </div>
+        <div>
+            <h2>Classifica Generale</h2>
+            <div id="totalResultsContainer"></div>
         </div>
     </div>
 
