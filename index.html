@@ -54,8 +54,15 @@
         </div>
         
         <div class="form-section result-section">
-            <button class="btn btn-danger" onclick="resetDailyScores()">Reset Classifica Giornaliera</button>
-            <button class="btn btn-danger" onclick="resetTotalScores()">Reset Classifica Totale</button>
+            <div class="form-group">
+                <label for="resetPassword">Password per reset:</label>
+                <input type="password" class="form-control" id="resetPassword" name="resetPassword">
+                <button class="btn btn-secondary mt-2" onclick="checkPassword()">Conferma</button>
+            </div>
+            <div id="resetButtons" style="display: none;">
+                <button class="btn btn-danger" onclick="resetDailyScores()">Reset Classifica Giornaliera</button>
+                <button class="btn btn-danger" onclick="resetTotalScores()">Reset Classifica Totale</button>
+            </div>
         </div>
 
         <div class="result-section">
