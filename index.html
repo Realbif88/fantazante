@@ -3,24 +3,39 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
+    <title>Classifica</title>
 </head>
 <body>
-    <h1>Login</h1>
-    <form id="loginForm" onsubmit="loginUser(event)">
-        <label for="email">Email:</label>
-        <input type="email" id="email" required>
+    <h1>Benvenuto nella Classifica</h1>
+
+    <form onsubmit="submitForm(); return false;">
+        <label for="nickname">Nickname:</label>
+        <input type="text" id="nickname" name="nickname" required>
         <br>
-        <label for="password">Password:</label>
-        <input type="password" id="password" required>
+        <label>Seleziona le caselle:</label>
         <br>
-        <button type="submit">Login</button>
+        <!-- Aggiungi qui le tue 20 caselle di selezione -->
+        <input type="checkbox" name="box" value="1"> Casella 1 (1 punto)<br>
+        <input type="checkbox" name="box" value="2"> Casella 2 (2 punti)<br>
+        <!-- Ripeti per tutte le caselle -->
+        <button type="submit">Invia</button>
     </form>
-    <p>Non hai un account? <a href="register.html">Registrati qui</a></p>
+
+    <button onclick="resetDailyScores()">Reset Classifica Giornaliera</button>
+    <button onclick="resetTotalScores()">Reset Classifica Totale</button>
+
+    <div id="dailyResult">
+        <h2>Classifica Giornaliera</h2>
+    </div>
+
+    <div id="totalResult">
+        <h2>Classifica Totale</h2>
+    </div>
 
     <!-- Includi gli script di Firebase -->
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+    <!-- Includi il tuo script -->
     <script src="script.js"></script>
 </body>
 </html>
