@@ -13,6 +13,8 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const database = firebase.database();
 
+let resetTarget = '';
+
 // Funzione per recuperare e visualizzare le classifiche
 function fetchResults() {
     fetchDailyResults();
@@ -47,25 +49,4 @@ function fetchDailyResults() {
 function fetchTotalResults() {
     const totalResultsRef = database.ref('totalResults');
 
-    totalResultsRef.once('value', snapshot => {
-        const data = snapshot.val();
-        const totalResultsContainer = document.getElementById('totalResultsContainer');
-        totalResultsContainer.innerHTML = ''; // Pulisce il contenitore
-
-        if (data !== null) {
-            const sortedResults = Object.entries(data).sort((a, b) => b[1] - a[1]);
-            sortedResults.forEach(([nickname, score]) => {
-                totalResultsContainer.innerHTML += `
-                    <p>${nickname}: ${score} punti</p>
-                `;
-            });
-        } else {
-            totalResultsContainer.innerHTML = `<p>Nessun dato trovato.</p>`;
-        }
-    }).catch(error => {
-        console.error('Errore durante il recupero dei dati generali:', error);
-    });
-}
-
-// Recupera i risultati quando la pagina viene caricata
-window.onload = fetchResults;
+    
