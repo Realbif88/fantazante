@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Classifiche per Nickname</title>
+    <title>Classifiche</title>
     <!-- Includere Bootstrap -->
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <style>
@@ -13,31 +13,19 @@
         .container {
             margin-top: 50px;
         }
-        h1, h2 {
-            text-align: center;
-        }
-        .result-section {
-            margin-top: 30px;
-            padding: 15px;
-            background-color: #ffffff;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Classifiche per Nickname</h1>
-        <div class="form-group">
-            <label for="nicknameSelect">Seleziona il Nickname:</label>
-            <select class="form-control" id="nicknameSelect" onchange="loadNicknameClassifica()">
-                <!-- Le opzioni verranno aggiunte dinamicamente -->
-            </select>
-        </div>
-        
-        <div id="classificaSezioni">
-            <!-- Le sezioni delle classifiche verranno aggiunte dinamicamente -->
-        </div>
+        <h1>Classifiche</h1>
+        <form id="nicknameForm">
+            <div class="form-group">
+                <label for="nicknameInput">Inserisci il Nickname:</label>
+                <input type="text" class="form-control" id="nicknameInput" required>
+            </div>
+            <button type="button" class="btn btn-primary" onclick="fetchResults()">Visualizza Classifica</button>
+        </form>
+        <div id="resultsContainer"></div>
     </div>
 
     <!-- Includere gli script di Firebase -->
