@@ -13,223 +13,77 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const database = firebase.database();
 
-let resetTarget = '';
-
-// Funzione per recuperare e visualizzare le classifiche
-function fetchResults() {
-    fetchDailyResults();
-    fetchTotalResults();
-    fetchDailyModules();
-}
-
-// Funzione per recuperare e visualizzare i risultati giornalieri
-function fetchDailyResults() {
+// Funzione per caricare le classifiche
+function loadRankings() {
     const dailyResultsRef = database.ref('dailyResults');
+    const totalResultsRef = database.ref('totalResults');
 
     dailyResultsRef.once('value', snapshot => {
         const data = snapshot.val();
-        const dailyResultsContainer = document.getElementById('dailyResultsContainer');
-        dailyResultsContainer.innerHTML = ''; // Pulisce il contenitore
-
-        if (data !== null) {
-            const sortedResults = Object.entries(data).sort((a, b) => b[1] - a[1]);
-            sortedResults.forEach(([nickname, score]) => {
-                dailyResultsContainer.innerHTML += `
-                    <p>${nickname}: ${score} punti</p>
-                `;
-            });
-        } else {
-            dailyResultsContainer.innerHTML = `<p>Nessun dato trovato.</p>`;
-        }
-    }).catch(error => {
-        console.error('Errore durante il recupero dei dati giornalieri:', error);
+        displayRanking('dailyRanking', data);
     });
-}
-
-// Funzione per recuperare e visualizzare i risultati generali
-function fetchTotalResults() {
-    const totalResultsRef = database.ref('totalResults');
 
     totalResultsRef.once('value', snapshot => {
         const data = snapshot.val();
-        const totalResultsContainer = document.getElementById('totalResultsContainer');
-        totalResultsContainer.innerHTML = ''; // Pulisce il contenitore
+        displayRanking('totalRanking', data);
+    });
+}
 
-        if (data !== null) {
-            const sortedResults = Object.entries(data).sort((a, b) => b[1] - a[1]);
-            sortedResults.forEach(([nickname, score]) => {
-                totalResultsContainer.innerHTML += `
-                    <p>${nickname}: ${score} punti</p>
-                `;
+// Funzione per visualizzare le classifiche
+function displayRanking(elementId, data) {
+    const container = document.getElementById(elementId);
+    container.innerHTML = '';
+
+    const sortedData = Object.entries(data || {}).sort((a, b) => b[1] - a[1]);
+    sortedData.forEach(([nickname, score], index) => {
+        container.innerHTML += `<p>${index + 1}. ${nickname}: ${score}</p>`;
+    });
+}
+
+// Funzione per resettare la classifica
+function resetRanking(type) {
+    const password = prompt("Inserisci la password per resettare la classifica:");
+    if (password === "Admin") {
+        const ref = database.ref(type === 'daily' ? 'dailyResults' : 'totalResults');
+        ref.remove()
+            .then(() => {
+                alert('Classifica resettata con successo.');
+                loadRankings();
+            })
+            .catch(error => {
+                console.error('Errore durante il reset della classifica:', error);
             });
-        } else {
-            totalResultsContainer.innerHTML = `<p>Nessun dato trovato.</p>`;
-        }
-    }).catch(error => {
-        console.error('Errore durante il recupero dei dati generali:', error);
-    });
+    } else {
+        alert("Password errata.");
+    }
 }
 
-// Funzione per recuperare e visualizzare i moduli giornalieri
-function fetchDailyModules() {
-    const dailyModulesRef = database.ref('dailyModules');
-    const dailyModulesContainer = document.getElementById('dailyModulesAccordion');
+// Funzione per copiare la classifica giornaliera nei moduli dei giorni
+function copyDailyToModule() {
+    const password = prompt("Inserisci la password per copiare la classifica giornaliera:");
+    if (password === "Admin") {
+        const module = prompt("Inserisci il numero del modulo (1-8):");
+        if (module >= 1 && module <= 8) {
+            const dailyResultsRef = database.ref('dailyResults');
+            const moduleRef = database.ref(`modules/day${module}`);
 
-    dailyModulesRef.once('value', snapshot => {
-        const data = snapshot.val();
-        dailyModulesContainer.innerHTML = ''; // Pulisce il contenitore
-
-        if (data !== null) {
-            for (let i = 1; i <= 8; i++) {
-                let content = '';
-                if (data[`day${i}`]) {
-                    const sortedResults = Object.entries(data[`day${i}`]).sort((a, b) => b[1] - a[1]);
-                    sortedResults.forEach(([nickname, score]) => {
-                        content += `<p>${nickname}: ${score} punti</p>`;
-                    });
-                } else {
-                    content = '<p>Nessun dato trovato.</p>';
-                }
-                dailyModulesContainer.innerHTML += `
-                    <div class="card">
-                        <div class="card-header" id="heading${i}">
-                            <h2 class="mb-0">
-                                <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapse${i}" aria-expanded="true" aria-controls="collapse${i}">
-                                    Giorno ${i}
-                                </button>
-                            </h2>
-                        </div>
-                        <div id="collapse${i}" class="collapse" aria-labelledby="heading${i}" data-parent="#dailyModulesAccordion">
-                            <div class="card-body">
-                                ${content}
-                                <button id="resetDay${i}Btn" class="btn btn-danger hidden" onclick="promptPassword('day${i}')">Reset Giorno ${i}</button>
-                            </div>
-                        </div>
-                    </div>
-                `;
-            }
-        } else {
-            dailyModulesContainer.innerHTML = `<p>Nessun dato trovato.</p>`;
-        }
-    }).catch(error => {
-        console.error('Errore durante il recupero dei moduli giornalieri:', error);
-    });
-}
-
-// Funzione per aprire il modal di Zantiamo
-function openZantiamoModal() {
-    $('#zantiamoModal').modal('show');
-}
-
-// Funzione per copiare i risultati giornalieri in uno dei moduli selezionati
-function copyDailyResults() {
-    const dayIndex = document.getElementById('moduleSelect').value;
-    const dailyResultsRef = database.ref('dailyResults');
-    const dailyModulesRef = database.ref(`dailyModules/day${dayIndex}`);
-
-    dailyResultsRef.once('value')
-        .then(snapshot => {
-            const dailyData = snapshot.val();
-            if (dailyData) {
-                dailyModulesRef.set(dailyData)
+            dailyResultsRef.once('value', snapshot => {
+                const data = snapshot.val();
+                moduleRef.set(data)
                     .then(() => {
-                        alert(`Risultati copiati nel modulo Giorno ${dayIndex}`);
-                        fetchDailyModules();
-                        $('#zantiamoModal').modal('hide');
+                        alert('Classifica copiata con successo.');
                     })
                     .catch(error => {
-                        console.error('Errore durante la copia dei risultati giornalieri:', error);
+                        console.error('Errore durante la copia della classifica:', error);
                     });
-            } else {
-                alert('Nessun dato giornaliero da copiare.');
-            }
-        }).catch(error => {
-            console.error('Errore durante il recupero dei dati giornalieri:', error);
-        });
-}
-
-// Funzione per aprire il modal di inserimento password per il reset
-function promptPassword(target) {
-    resetTarget = target;
-    $('#passwordModal').modal('show');
-}
-
-// Funzione per verificare la password per il reset
-function verifyPassword() {
-    const password = document.getElementById('adminPassword').value;
-    if (password === 'Admin') {
-        if (resetTarget === 'daily') {
-            resetDailyResults();
-        } else if (resetTarget === 'total') {
-            resetTotalResults();
-        } else if (resetTarget.startsWith('day')) {
-            resetDailyModule(resetTarget);
+            });
+        } else {
+            alert("Numero del modulo non valido.");
         }
-        $('#passwordModal').modal('hide');
     } else {
-        alert('Password errata!');
+        alert("Password errata.");
     }
 }
 
-// Funzione per aprire il modal di inserimento password per accesso admin
-function promptAdminPassword() {
-    $('#adminPasswordModal').modal('show');
-}
-
-// Funzione per verificare la password per accesso admin
-function verifyAdminAccess() {
-    const password = document.getElementById('adminAccessPassword').value;
-    if (password === 'Admin') {
-        $('#adminPasswordModal').modal('hide');
-        document.getElementById('resetDailyBtn').classList.remove('hidden');
-        document.getElementById('resetTotalBtn').classList.remove('hidden');
-        document.getElementById('zantiamoBtn').classList.remove('hidden');
-        for (let i = 1; i <= 8; i++) {
-            document.getElementById(`resetDay${i}Btn`).classList.remove('hidden');
-        }
-    } else {
-        alert('Password errata!');
-    }
-}
-
-// Funzione per resettare la classifica giornaliera
-function resetDailyResults() {
-    const dailyResultsRef = database.ref('dailyResults');
-    dailyResultsRef.remove()
-        .then(() => {
-            alert('Classifica giornaliera resettata!');
-            fetchDailyResults();
-        })
-        .catch(error => {
-            console.error('Errore durante il reset della classifica giornaliera:', error);
-        });
-}
-
-// Funzione per resettare la classifica generale
-function resetTotalResults() {
-    const totalResultsRef = database.ref('totalResults');
-    totalResultsRef.remove()
-        .then(() => {
-            alert('Classifica generale resettata!');
-            fetchTotalResults();
-        })
-        .catch(error => {
-            console.error('Errore durante il reset della classifica generale:', error);
-        });
-}
-
-// Funzione per resettare i risultati di un giorno specifico
-function resetDailyModule(day) {
-    const dailyModuleRef = database.ref(`dailyModules/${day}`);
-    dailyModuleRef.remove()
-        .then(() => {
-            alert(`Modulo ${day} resettato!`);
-            fetchDailyModules();
-        })
-        .catch(error => {
-            console.error(`Errore durante il reset del modulo ${day}:`, error);
-        });
-}
-
-// Recupera i risultati quando la pagina viene caricata
-window.onload = fetchResults;
+// Inizializza le classifiche al caricamento della pagina
+document.addEventListener('DOMContentLoaded', loadRankings);
