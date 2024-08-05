@@ -19,8 +19,7 @@
         <div id="totalRanking"></div>
 
         <!-- Finestra a tendina per i moduli dei giorni -->
-        <h3>Moduli Giornalieri</h3>
-        <div class="accordion" id="accordionExample">
+        <div class="accordion mt-4" id="accordionExample">
             <!-- Modulo Giorno 1 -->
             <div class="card">
                 <div class="card-header" id="headingOne">
@@ -34,8 +33,6 @@
                     <div class="card-body" id="giorno1"></div>
                 </div>
             </div>
-            <!-- Ripetere per Giorno 2, Giorno 3, ... -->
-            <!-- Per esempio: -->
             <!-- Modulo Giorno 2 -->
             <div class="card">
                 <div class="card-header" id="headingTwo">
@@ -49,7 +46,71 @@
                     <div class="card-body" id="giorno2"></div>
                 </div>
             </div>
-            <!-- Aggiungi altri moduli per Giorno 3 - Giorno 8 -->
+            <!-- Modulo Giorno 3 -->
+            <div class="card">
+                <div class="card-header" id="headingThree">
+                    <h5 class="mb-0">
+                        <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                            Giorno 3
+                        </button>
+                    </h5>
+                </div>
+                <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#accordionExample">
+                    <div class="card-body" id="giorno3"></div>
+                </div>
+            </div>
+            <!-- Modulo Giorno 4 -->
+            <div class="card">
+                <div class="card-header" id="headingFour">
+                    <h5 class="mb-0">
+                        <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
+                            Giorno 4
+                        </button>
+                    </h5>
+                </div>
+                <div id="collapseFour" class="collapse" aria-labelledby="headingFour" data-parent="#accordionExample">
+                    <div class="card-body" id="giorno4"></div>
+                </div>
+            </div>
+            <!-- Modulo Giorno 5 -->
+            <div class="card">
+                <div class="card-header" id="headingFive">
+                    <h5 class="mb-0">
+                        <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseFive" aria-expanded="false" aria-controls="collapseFive">
+                            Giorno 5
+                        </button>
+                    </h5>
+                </div>
+                <div id="collapseFive" class="collapse" aria-labelledby="headingFive" data-parent="#accordionExample">
+                    <div class="card-body" id="giorno5"></div>
+                </div>
+            </div>
+            <!-- Modulo Giorno 6 -->
+            <div class="card">
+                <div class="card-header" id="headingSix">
+                    <h5 class="mb-0">
+                        <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseSix" aria-expanded="false" aria-controls="collapseSix">
+                            Giorno 6
+                        </button>
+                    </h5>
+                </div>
+                <div id="collapseSix" class="collapse" aria-labelledby="headingSix" data-parent="#accordionExample">
+                    <div class="card-body" id="giorno6"></div>
+                </div>
+            </div>
+            <!-- Modulo Giorno 7 -->
+            <div class="card">
+                <div class="card-header" id="headingSeven">
+                    <h5 class="mb-0">
+                        <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseSeven" aria-expanded="false" aria-controls="collapseSeven">
+                            Giorno 7
+                        </button>
+                    </h5>
+                </div>
+                <div id="collapseSeven" class="collapse" aria-labelledby="headingSeven" data-parent="#accordionExample">
+                    <div class="card-body" id="giorno7"></div>
+                </div>
+            </div>
         </div>
 
         <!-- Pulsanti di amministrazione -->
@@ -59,7 +120,11 @@
             <button class="btn btn-primary mt-3" onclick="chooseDayModule()">Zantiamo</button>
             <button class="btn btn-danger mt-3" onclick="resetModule('giorno1')">Reset Giorno 1</button>
             <button class="btn btn-danger mt-3" onclick="resetModule('giorno2')">Reset Giorno 2</button>
-            <!-- Aggiungi altri pulsanti di reset per Giorno 3 - Giorno 8 -->
+            <button class="btn btn-danger mt-3" onclick="resetModule('giorno3')">Reset Giorno 3</button>
+            <button class="btn btn-danger mt-3" onclick="resetModule('giorno4')">Reset Giorno 4</button>
+            <button class="btn btn-danger mt-3" onclick="resetModule('giorno5')">Reset Giorno 5</button>
+            <button class="btn btn-danger mt-3" onclick="resetModule('giorno6')">Reset Giorno 6</button>
+            <button class="btn btn-danger mt-3" onclick="resetModule('giorno7')">Reset Giorno 7</button>
         </div>
 
         <!-- Pulsante per tornare alla schermata index -->
