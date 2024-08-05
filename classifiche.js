@@ -13,6 +13,16 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const database = firebase.database();
 
+// Funzione per controllare la password admin
+function checkAdminPassword() {
+    const password = document.getElementById('adminPassword').value;
+    if (password === 'Admin') {
+        document.getElementById('adminButtons').style.display = 'block';
+    } else {
+        alert('Password non corretta');
+    }
+}
+
 // Funzione per caricare le classifiche
 function loadRankings() {
     const dailyResultsRef = database.ref('dailyResults');
@@ -37,6 +47,43 @@ function displayRanking(elementId, data) {
     const sortedData = Object.entries(data || {}).sort((a, b) => b[1] - a[1]);
     sortedData.forEach(([nickname, score], index) => {
         container.innerHTML += `<p>${index + 1}. ${nickname}: ${score}</p>`;
+    });
+}
+
+// Funzione per resettare la classifica giornaliera
+function resetDailyRanking() {
+    if (confirm('Sei sicuro di voler resettare la classifica giornaliera?')) {
+        database.ref('dailyResults').remove();
+        alert('Classifica giornaliera resettata.');
+        loadRankings(); // Ricarica le classifiche dopo il reset
+    }
+}
+
+// Funzione per resettare la classifica generale
+function resetTotalRanking() {
+    if (confirm('Sei sicuro di voler resettare la classifica generale?')) {
+        database.ref('totalResults').remove();
+        alert('Classifica generale resettata.');
+        loadRankings(); // Ricarica le classifiche dopo il reset
+    }
+}
+
+// Funzione per gestire il pulsante Zantiamo
+function chooseDayModule() {
+    const day = prompt("Inserisci il numero del giorno (1-8):");
+    if (day >= 1 && day <= 8) {
+        copyDailyRankingToModule(day);
+    } else {
+        alert('Numero del giorno non valido');
+    }
+}
+
+// Funzione per copiare la classifica giornaliera in un modulo specifico
+function copyDailyRankingToModule(day) {
+    database.ref('dailyResults').once('value', snapshot => {
+        const data = snapshot.val();
+        database.ref(`modules/giorno${day}`).set(data);
+        alert(`Classifica giornaliera copiata nel Giorno ${day}`);
     });
 }
 
