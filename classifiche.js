@@ -13,38 +13,12 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const database = firebase.database();
 
-// Funzione per inviare il punteggio
-function submitScore() {
-    const nickname = document.getElementById('nickname').value;
-    if (!nickname) {
-        alert('Inserisci il tuo nickname!');
-        return;
-    }
-
-    let score = 0;
-    for (let i = 1; i <= 20; i++) {
-        const checkbox = document.getElementById('casella' + i);
-        if (checkbox && checkbox.checked) {
-            score += 10; // Aggiungi il punteggio della casella selezionata
-        }
-    }
-
-    // Aggiorna la classifica giornaliera
-    const dailyRef = database.ref('dailyResults/' + nickname);
-    dailyRef.once('value').then(snapshot => {
-        const existingScore = snapshot.val() || 0;
-        dailyRef.set(existingScore + score);
-    });
-
-    // Aggiorna la classifica generale
-    const totalRef = database.ref('totalResults/' + nickname);
-    totalRef.once('value').then(snapshot => {
-        const existingScore = snapshot.val() || 0;
-        totalRef.set(existingScore + score);
-    });
-
-    alert('Dati inviati con successo!');
-}
+// Carica le classifiche al caricamento della pagina
+document.addEventListener('DOMContentLoaded', () => {
+    loadRankings();
+    loadModules();
+    checkAdminAccess();
+});
 
 // Funzione per caricare le classifiche
 function loadRankings() {
@@ -62,15 +36,30 @@ function loadRankings() {
     });
 }
 
+// Funzione per caricare i moduli dei giorni
+function loadModules() {
+    for (let i = 1; i <= 8; i++) {
+        const moduleRef = database.ref(`modules/giorno${i}`);
+        moduleRef.once('value', snapshot => {
+            const data = snapshot.val();
+            displayRanking(`giorno${i}`, data);
+        });
+    }
+}
+
 // Funzione per visualizzare le classifiche
 function displayRanking(elementId, data) {
     const container = document.getElementById(elementId);
     container.innerHTML = '';
 
-    const sortedData = Object.entries(data || {}).sort((a, b) => b[1] - a[1]);
-    sortedData.forEach(([nickname, score], index) => {
-        container.innerHTML += `<p>${index + 1}. ${nickname}: ${score}</p>`;
-    });
+    if (data) {
+        const sortedData = Object.entries(data).sort((a, b) => b[1] - a[1]);
+        sortedData.forEach(([nickname, score], index) => {
+            container.innerHTML += `<p>${index + 1}. ${nickname}: ${score}</p>`;
+        });
+    } else {
+        container.innerHTML = '<p>Nessun dato disponibile</p>';
+    }
 }
 
 // Funzione per resettare la classifica giornaliera
@@ -88,6 +77,15 @@ function resetTotalRanking() {
         database.ref('totalResults').remove();
         alert('Classifica generale resettata.');
         loadRankings(); // Ricarica le classifiche dopo il reset
+    }
+}
+
+// Funzione per resettare un modulo specifico
+function resetModule(moduleId) {
+    if (confirm(`Sei sicuro di voler resettare il ${moduleId.replace('giorno', 'Giorno ')}?`)) {
+        database.ref(`modules/${moduleId}`).remove();
+        alert(`${moduleId.replace('giorno', 'Giorno ')} resettato.`);
+        loadModules(); // Ricarica i moduli dopo il reset
     }
 }
 
@@ -110,5 +108,12 @@ function copyDailyRankingToModule(day) {
     });
 }
 
-// Inizializza le classifiche al caricamento della pagina
-document.addEventListener('DOMContentLoaded', loadRankings);
+// Funzione per controllare l'accesso dell'admin
+function checkAdminAccess() {
+    const password = prompt('Inserisci la password Admin:');
+    if (password === 'Admin') {
+        document.getElementById('adminButtons').style.display = 'block';
+    } else {
+        alert('Accesso negato');
+    }
+}
