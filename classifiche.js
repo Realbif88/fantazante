@@ -2,25 +2,20 @@
 const firebaseConfig = {
     apiKey: "AIzaSyCvaKb_04q7AH9p9xAKQft-mb3-IpWTTtM",
     authDomain: "fantazante24.firebaseapp.com",
-    databaseURL: "https://fantazante24-default-rtdb.europe-west1.firebasedatabase.app",
+    databaseURL: "https://fantazante-36bd2-default-rtdb.europe-west1.firebasedatabase.app/",
     projectId: "fantazante24",
     storageBucket: "fantazante24.appspot.com",
     messagingSenderId: "855297509496",
     appId: "1:855297509496:web:b92ea9f3035ed7e98d458d"
 };
-
-// Inizializza Firebase
 firebase.initializeApp(firebaseConfig);
 const database = firebase.database();
 
-// Carica le classifiche al caricamento della pagina
 document.addEventListener('DOMContentLoaded', () => {
     loadRankings();
     loadModules();
-    checkAdminAccess();
 });
 
-// Funzione per caricare le classifiche
 function loadRankings() {
     const dailyResultsRef = database.ref('dailyResults');
     const totalResultsRef = database.ref('totalResults');
@@ -48,7 +43,6 @@ function loadRankings() {
     });
 }
 
-// Funzione per caricare i moduli dei giorni
 function loadModules() {
     for (let i = 1; i <= 7; i++) {
         const dayModuleRef = database.ref(`moduliGiorno/giorno${i}`);
@@ -79,10 +73,15 @@ function resetModule(day) {
 }
 
 // Funzione per controllare l'accesso Admin
-function checkAdminAccess() {
-    const adminPassword = prompt('Inserisci la password Admin:');
-    if (adminPassword === 'Admin') {
+function showAdminAccess() {
+    document.getElementById('adminAccessForm').style.display = 'block';
+}
+
+function validateAdminAccess() {
+    const adminPassword = document.getElementById('adminPassword').value;
+    if (adminPassword === 'Adminsasi') {
         document.getElementById('adminButtons').style.display = 'block';
+        document.getElementById('adminAccessForm').style.display = 'none';
     } else {
         alert('Accesso negato');
     }
