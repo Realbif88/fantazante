@@ -4,34 +4,30 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Classifiche</title>
-    <!-- Includere Bootstrap -->
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        body {
-            background-color: #f8f9fa;
-        }
-        .container {
-            margin-top: 50px;
-        }
-        .hidden {
-            display: none;
-        }
-    </style>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
 </head>
 <body>
-    <div class="container">
+    <div class="container mt-5">
         <h1>Classifiche</h1>
-
-        <h2>Classifica Giornaliera</h2>
         <div id="dailyRanking"></div>
-        <button class="btn btn-danger mt-3" onclick="resetRanking('daily')">Reset Classifica Giornaliera</button>
-        <button class="btn btn-warning mt-3" onclick="copyDailyToModule()">Zantiamo</button>
-
-        <h2>Classifica Generale</h2>
         <div id="totalRanking"></div>
-        <button class="btn btn-danger mt-3" onclick="resetRanking('total')">Reset Classifica Generale</button>
 
+        <!-- Pulsanti di amministrazione -->
+        <div id="adminButtons" style="display: none;">
+            <button class="btn btn-warning mt-3" onclick="resetDailyRanking()">Reset Classifica Giornaliera</button>
+            <button class="btn btn-warning mt-3" onclick="resetTotalRanking()">Reset Classifica Generale</button>
+            <button class="btn btn-primary mt-3" onclick="chooseDayModule()">Zantiamo</button>
+        </div>
+
+        <!-- Pulsante per tornare alla schermata index -->
         <button class="btn btn-primary mt-5" onclick="window.location.href='index.html'">Torna alla Schermata Index</button>
+
+        <!-- Campo per inserire la password admin -->
+        <div class="mt-3">
+            <label for="adminPassword">Inserisci la password admin:</label>
+            <input type="password" id="adminPassword" class="form-control">
+            <button class="btn btn-success mt-2" onclick="checkAdminPassword()">Accedi</button>
+        </div>
     </div>
 
     <!-- Includere Firebase -->
