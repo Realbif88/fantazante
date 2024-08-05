@@ -80,8 +80,10 @@ function submitScores() {
     // Calcola il punteggio totale
     const totalScore = selectedScores.reduce((acc, score) => acc + score, 0);
 
-    // Aggiorna i punteggi giornalieri e totali sommando i punteggi esistenti
+    // Aggiorna i punteggi giornalieri sommando i punteggi esistenti
     dailyResultsRef.child(nickname).transaction(currentScore => (currentScore || 0) + totalScore);
+
+    // Aggiorna i punteggi totali sommando i punteggi esistenti
     totalResultsRef.child(nickname).transaction(currentScore => (currentScore || 0) + totalScore);
 
     // Prepara i dati da salvare
