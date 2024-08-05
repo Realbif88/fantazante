@@ -40,50 +40,5 @@ function displayRanking(elementId, data) {
     });
 }
 
-// Funzione per resettare la classifica
-function resetRanking(type) {
-    const password = prompt("Inserisci la password per resettare la classifica:");
-    if (password === "Admin") {
-        const ref = database.ref(type === 'daily' ? 'dailyResults' : 'totalResults');
-        ref.remove()
-            .then(() => {
-                alert('Classifica resettata con successo.');
-                loadRankings();
-            })
-            .catch(error => {
-                console.error('Errore durante il reset della classifica:', error);
-            });
-    } else {
-        alert("Password errata.");
-    }
-}
-
-// Funzione per copiare la classifica giornaliera nei moduli dei giorni
-function copyDailyToModule() {
-    const password = prompt("Inserisci la password per copiare la classifica giornaliera:");
-    if (password === "Admin") {
-        const module = prompt("Inserisci il numero del modulo (1-8):");
-        if (module >= 1 && module <= 8) {
-            const dailyResultsRef = database.ref('dailyResults');
-            const moduleRef = database.ref(`modules/day${module}`);
-
-            dailyResultsRef.once('value', snapshot => {
-                const data = snapshot.val();
-                moduleRef.set(data)
-                    .then(() => {
-                        alert('Classifica copiata con successo.');
-                    })
-                    .catch(error => {
-                        console.error('Errore durante la copia della classifica:', error);
-                    });
-            });
-        } else {
-            alert("Numero del modulo non valido.");
-        }
-    } else {
-        alert("Password errata.");
-    }
-}
-
 // Inizializza le classifiche al caricamento della pagina
 document.addEventListener('DOMContentLoaded', loadRankings);
