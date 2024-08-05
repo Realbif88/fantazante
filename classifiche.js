@@ -13,14 +13,37 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const database = firebase.database();
 
-// Funzione per controllare la password admin
-function checkAdminPassword() {
-    const password = document.getElementById('adminPassword').value;
-    if (password === 'Admin') {
-        document.getElementById('adminButtons').style.display = 'block';
-    } else {
-        alert('Password non corretta');
+// Funzione per inviare il punteggio
+function submitScore() {
+    const nickname = document.getElementById('nickname').value;
+    if (!nickname) {
+        alert('Inserisci il tuo nickname!');
+        return;
     }
+
+    let score = 0;
+    for (let i = 1; i <= 20; i++) {
+        const checkbox = document.getElementById('casella' + i);
+        if (checkbox && checkbox.checked) {
+            score += 10; // Aggiungi il punteggio della casella selezionata
+        }
+    }
+
+    // Aggiorna la classifica giornaliera
+    const dailyRef = database.ref('dailyResults/' + nickname);
+    dailyRef.once('value').then(snapshot => {
+        const existingScore = snapshot.val() || 0;
+        dailyRef.set(existingScore + score);
+    });
+
+    // Aggiorna la classifica generale
+    const totalRef = database.ref('totalResults/' + nickname);
+    totalRef.once('value').then(snapshot => {
+        const existingScore = snapshot.val() || 0;
+        totalRef.set(existingScore + score);
+    });
+
+    alert('Dati inviati con successo!');
 }
 
 // Funzione per caricare le classifiche
