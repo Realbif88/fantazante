@@ -3,43 +3,35 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Index</title>
-    <!-- Includere Bootstrap -->
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        body {
-            background-color: #f8f9fa;
-        }
-        .container {
-            margin-top: 50px;
-        }
-    </style>
+    <title>Invia Punteggi</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
 </head>
 <body>
-    <div class="container">
-        <h1>Benvenuto!</h1>
-        <form id="scoreForm">
-            <div class="form-group">
-                <label for="nickname">Nickname</label>
-                <input type="text" id="nickname" class="form-control" required>
-            </div>
+    <div class="container mt-5">
+        <h1>Invia i tuoi punteggi</h1>
+        <div class="form-group">
+            <label for="nickname">Nickname:</label>
+            <input type="text" id="nickname" class="form-control" required>
+        </div>
 
-            <!-- Sezione con le caselle di controllo e punteggi -->
-            <h4>Punteggi</h4>
-            <div id="checkboxContainer">
-                <!-- JavaScript inietterà qui le caselle di controllo -->
+        <div id="caselle">
+            <!-- Genera 20 caselle di spunta -->
+            <h3>Seleziona le caselle:</h3>
+            <div class="form-check">
+                <input type="checkbox" id="casella1" class="form-check-input">
+                <label class="form-check-label" for="casella1">Casella 1 (Punteggio: 10)</label>
             </div>
+            <!-- Ripetere per le altre caselle... -->
+            <!-- Per esempio, generare 20 caselle qui -->
+        </div>
 
-            <button type="button" class="btn btn-primary mt-3" onclick="submitScores()">Invia</button>
-        </form>
+        <button class="btn btn-primary mt-3" onclick="submitScore()">Invia</button>
         <button class="btn btn-secondary mt-3" onclick="window.location.href='classifiche.html'">Visualizza Classifiche</button>
-        <button class="btn btn-info mt-3" onclick="window.location.href='profilo.html'">Profilo</button>
     </div>
 
-    <!-- Includere gli script di Firebase -->
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
-    <!-- Includere il tuo script -->
-    <script src="index.js"></script>
+    <!-- Includere Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-database.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>
